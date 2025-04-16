@@ -4,7 +4,8 @@ import com.example.demo.model.Review;
 import com.example.demo.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.id;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
+    public ResponseEntity<Review> getReviewById(@PathVariable String id) {
         return reviewService.getReviewById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -32,14 +33,14 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody Review reviewDetails) {
+    public ResponseEntity<Review> updateReview(@PathVariable String id, @RequestBody Review reviewDetails) {
         return reviewService.updateReview(id, reviewDetails)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReview(@PathVariable String id) {
         if (reviewService.deleteReview(id)) {
             return ResponseEntity.noContent().build();
         } else {

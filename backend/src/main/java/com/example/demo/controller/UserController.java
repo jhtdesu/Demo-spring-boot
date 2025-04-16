@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -36,7 +37,7 @@ public class UserController {
         model.addAttribute("message", message);
         return "add-user";
     }
-
+    @CrossOrigin(origins = "http://localhost:5173")
     @ResponseBody
     @GetMapping("/getAllUsers")
     public List<User> getAllUsers() {
@@ -56,3 +57,4 @@ public class UserController {
         return userService.editUser(user);
     }
 }
+
