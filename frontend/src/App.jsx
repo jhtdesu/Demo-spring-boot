@@ -8,7 +8,7 @@ function App() {
   const [users, setUsers] = useState([])
 
   useEffect(() => { 
-    loadUsers()
+    loadUsers();
   });
 
   const loadUsers = async () => {

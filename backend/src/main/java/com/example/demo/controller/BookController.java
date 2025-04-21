@@ -5,22 +5,41 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.demo.model.Book;
+import com.example.demo.BookService;
 
 import java.util.List;
 
-@RestController
+@Controller
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
-    @PostMapping("/addBook")
-    public Book addBook(@RequestBody Book book) {
-        return bookService.addBook(book);
+    @GetMapping("/addBookForm")
+    public String showAddBookForm() {
+        return "add-book";
     }
 
+    @PostMapping("/addBook")
+    public String addBook(@RequestParam String title, @RequestParam String author,
+            @RequestParam String content, @RequestParam String chapter, Model model) {
+        Book newBook = new Book(null, title, author, content, chapter);
+        bookService.addBook(newBook);
+
+        String message = "Book \"" + title + "\" by " + author + " added successfully!";
+        model.addAttribute("message", message);
+        return "add-book";
+    }
+
+    @ResponseBody
     @GetMapping("/getAllBooks")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();

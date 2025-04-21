@@ -29,9 +29,8 @@ public class UserController {
 
     @PostMapping("/addUser")
     public String addUser(@RequestParam String name, @RequestParam String email, Model model) {
-        User newUser = new User(name, email, null);
+        User newUser = new User(null, name, email);
         userService.addUser(newUser);
-
         String message = "User " + name + " with email " + email + " added successfully!";
         model.addAttribute("message", message);
         return "add-user";

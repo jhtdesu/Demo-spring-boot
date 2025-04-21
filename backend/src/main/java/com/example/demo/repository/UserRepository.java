@@ -7,5 +7,4 @@ import com.example.demo.model.User;
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
     // Custom query methods can be defined here if needed
-
 }

@@ -24,9 +24,7 @@ public class Config {
                                 .formLogin(withDefaults())
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // Specify
-                                                                                                            // the
-                                                                                                            // logout
-                                                                                                            // URL
+                                                                                                            // // URL
                                                 .logoutSuccessUrl("/home") // Redirect after successful logout
                                                 .invalidateHttpSession(true) // Invalidate the HTTP session
                                                 .clearAuthentication(true) // Clear the authentication
