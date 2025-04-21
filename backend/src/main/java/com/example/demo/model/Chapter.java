@@ -3,6 +3,7 @@ package com.example.demo.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import com.example.demo.model.Book;
 
 @Document
 public class Chapter {
@@ -14,11 +15,10 @@ public class Chapter {
     @DBRef
     private Book book;
 
-    public Chapter(String id, String title, String content, Book book) {
+    public Chapter(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.book = book;
     }
 
     public String getId() {
@@ -46,6 +46,6 @@ public class Chapter {
     }
 
     public Book getBook() {
-        return book;
+        return this.book;
     }
 }

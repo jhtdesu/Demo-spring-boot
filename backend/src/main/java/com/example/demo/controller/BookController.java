@@ -44,4 +44,10 @@ public class BookController {
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
+
+    @ResponseBody
+    @GetMapping("/getBook/{id}")
+    public Book getBook(@PathVariable String id) {
+        return bookService.getBookById(id);
+    }
 }
