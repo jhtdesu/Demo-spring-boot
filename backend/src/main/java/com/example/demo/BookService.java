@@ -22,4 +22,12 @@ public class BookService {
     public Book getBookById(String id) {
         return bookRepository.findById(id).orElse(null);
     }
+
+    public Book updateBook(String id, Book book) {
+        if (bookRepository.existsById(id)) {
+            book.setId(id);
+            return bookRepository.save(book);
+        }
+        return null;
+    }
 }

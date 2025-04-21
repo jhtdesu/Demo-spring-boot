@@ -50,4 +50,27 @@ public class BookController {
     public Book getBook(@PathVariable String id) {
         return bookService.getBookById(id);
     }
+
+    @GetMapping("/editBookForm/{id}")
+    public String showEditBookForm(@PathVariable String id, Model model) {
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "edit-book";
+    }
+
+    @PostMapping("/editBook/{id}")
+    public String editBook(@PathVariable String id,
+            @RequestParam String title,
+            @RequestParam String author,
+            @RequestParam String content,
+            @RequestParam String chapter,
+            Model model) {
+        Book updatedBook = new Book(id, title, author, content, chapter);
+        bookService.updateBook(id, updatedBook);
+        Book updatedBookFromDb = bookService.getBookById(id); // Re-fetch the updated book
+        String message = "Book \"" + updatedBookFromDb.getTitle() + "\" updated successfully!";
+        model.addAttribute("message", message);
+        model.addAttribute("book", updatedBookFromDb); // Add the updated book back to the model
+        return "edit-book";
+    }
 }

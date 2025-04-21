@@ -15,10 +15,16 @@ public class Chapter {
     @DBRef
     private Book book;
 
+    // Existing constructor that takes three Strings
     public Chapter(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
+    }
+
+    // Add this no-argument constructor
+    public Chapter() {
+        // You can optionally initialize fields with default values here if needed
     }
 
     public String getId() {
@@ -47,5 +53,9 @@ public class Chapter {
 
     public Book getBook() {
         return this.book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 }
