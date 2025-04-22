@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.model.LoginResponse;
 
-
-
-
 @Controller
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -32,19 +29,17 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-
     @GetMapping("/login")
     public String login() {
-        return "login"; 
+        return "login";
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    loginRequest.getEmail(), loginRequest.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(), loginRequest.getPassword()));
 
             String token = jwtUtil.generateToken(loginRequest.getEmail());
             return ResponseEntity.ok(new LoginResponse(token));
@@ -52,11 +47,10 @@ public class AuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         } catch (Exception ex) {
-            ex.printStackTrace();  // ❗ In lỗi thật ra console
+            ex.printStackTrace(); // ❗ In lỗi thật ra console
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + ex.getMessage());
         }
     }
-
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
