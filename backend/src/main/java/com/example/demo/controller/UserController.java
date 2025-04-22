@@ -65,9 +65,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    // @ResponseBody
     public String processRegister(@RequestParam String name, @RequestParam String password, @RequestParam String email, Model model) {
         // Gọi UserService để lưu user
-        User newUser = new User(name, password, email);
+        User newUser = new User(null, name, password, email);
 
         userService.register(newUser);
         return "redirect:/login";

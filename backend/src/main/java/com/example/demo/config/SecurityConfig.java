@@ -10,22 +10,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.demo.security.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private JwtFilter jwtFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // nếu cần CSRF, có thể bật lại
+            .cors() // 👈 Kích hoạt cấu hình CORS từ CorsConfig
+            .and()
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/home", "/login", "/register", "/css/**", "/js/**", "/error", "/api/auth/**").permitAll()
                 .anyRequest().authenticated()
@@ -60,9 +62,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-
-
-    @Autowired
-    private JwtFilter jwtFilter;
-
-}
+} 

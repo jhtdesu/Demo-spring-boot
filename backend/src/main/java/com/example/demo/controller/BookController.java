@@ -17,6 +17,10 @@ import com.example.demo.service.BookService;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+@CrossOrigin(origins = "http://localhost:5173/")
+
 @Controller
 public class BookController {
 
