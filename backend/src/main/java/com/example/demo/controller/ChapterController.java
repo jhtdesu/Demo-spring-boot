@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.example.demo.model.Chapter;
 import com.example.demo.repository.ChapterRepository;
 import com.example.demo.model.Book;
-import com.example.demo.BookService;
+import com.example.demo.service.BookService;
+import com.example.demo.service.ChapterService;
 
 import java.util.List;
 

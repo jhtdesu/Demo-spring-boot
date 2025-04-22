@@ -9,13 +9,23 @@ public class User {
     @Id
     private String id;
     private String name;
+    private String password;
     private String email;
 
-    public User(String id, String name, String email) {
+    public User(
+        // String id, 
+        String name,
+        String password, 
+        String email) {
         super();
-        this.id = id;
+        // this.id = id;
         this.name = name;
+        this.password = password;
         this.email = email;
+    }
+
+    public User() {
+    // Constructor rỗng
     }
 
     public String getId() {
@@ -32,6 +42,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {

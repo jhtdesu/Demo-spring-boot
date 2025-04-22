@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.example.demo.model.User;
-import com.example.demo.UserService;
+import com.example.demo.service.UserService;
 
 import java.util.List;
 
@@ -27,14 +28,14 @@ public class UserController {
         return "add-user";
     }
 
-    @PostMapping("/addUser")
-    public String addUser(@RequestParam String name, @RequestParam String email, Model model) {
-        User newUser = new User(null, name, email);
-        userService.addUser(newUser);
-        String message = "User " + name + " with email " + email + " added successfully!";
-        model.addAttribute("message", message);
-        return "add-user";
-    }
+    // @PostMapping("/addUser")
+    // public String addUser(@RequestParam String name, @RequestParam String email, Model model) {
+    //     User newUser = new User(null, name, email);
+    //     userService.addUser(newUser);
+    //     String message = "User " + name + " with email " + email + " added successfully!";
+    //     model.addAttribute("message", message);
+    //     return "add-user";
+    // }
 
     @ResponseBody
     @GetMapping("/getAllUsers")
@@ -53,5 +54,22 @@ public class UserController {
     @ResponseBody
     public User editUser(@RequestBody User user) {
         return userService.editUser(user);
+    }
+
+    @GetMapping("/register")
+    public String showRegisterForm(Model model) {
+        // Create a new User object to send to the form
+        User user = new User();
+        model.addAttribute("user", user);
+        return "register"; // Return the view name for the registration form
+    }
+
+    @PostMapping("/register")
+    public String processRegister(@RequestParam String name, @RequestParam String password, @RequestParam String email, Model model) {
+        // Gọi UserService để lưu user
+        User newUser = new User(name, password, email);
+
+        userService.register(newUser);
+        return "redirect:/login";
     }
 }
