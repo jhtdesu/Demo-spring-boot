@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Georgia', serif;
+  background: url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4') no-repeat center center/cover;
+  height: 100vh;
+}
+
+.book-login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  backdrop-filter: blur(3px);
+}
+
+.book-login-box {
+  background-color: rgba(255, 248, 240, 0.95);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  max-width: 400px;
+  text-align: center;
+}
+
+.book-title {
+  font-size: 2rem;
+  margin-bottom: 0.2em;
+  color: #3e3b3b;
+}
+
+.book-subtitle {
+  font-size: 1rem;
+  color: #7b6f5c;
+  margin-bottom: 1.5em;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.btn-login {
+  width: 100%;
+  background-color: #6b4f2f;
+  color: #fff;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-login:hover {
+  background-color: #5a4127;
+}
+
+.divider {
+  margin: 20px 0;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.btn-google {
+  text-decoration: none;
+  color: #fff;
+  background-color: #de5246;
+  padding: 10px 20px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.btn-google:hover {
+  background-color: #c34035;
+}

@@ -11,7 +11,7 @@ const LoginScreen = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8080/login', {
+      const response = await axios.post('http://localhost:8086/login', {
         username,
         password,
       });
@@ -61,7 +61,7 @@ const LoginScreen = () => {
         <button type="submit">Login</button>
       </form>
       {/* If you have OAuth2 buttons, you would add them here */}
-      <button onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/google'}>Login with Google</button>
+      <button onClick={() => window.location.href = 'http://localhost:8086/oauth2/authorization/google'}>Login with Google</button>
     </div>
   );
 };
