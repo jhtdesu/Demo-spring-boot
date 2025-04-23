@@ -1,5 +1,6 @@
 import React from 'react';
-import './Login.css'; // Tự động lấy file CSS cùng thư mục
+import '../styles/login.css';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   return (
@@ -19,6 +20,10 @@ const Login = () => {
         <a href="http://localhost:8086/oauth2/authorization/google" className="btn-google">
           Đăng nhập với Google
         </a>
+
+        <div className="text-center" style={{ marginTop: '1rem' }}>
+          Chưa có tài khoản?&nbsp;<Link to="/register">Đăng ký</Link>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,131 @@
+/* src/styles/home.css */
+
+/* 1. Import font từ Google */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400&display=swap');
+
+/* 2. Reset cơ bản */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 3. Background toàn màn hình */
+body {
+  background: url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4') 
+    no-repeat center center/cover;
+}
+
+/* 4. Wrapper cho toàn page */
+.home-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* 5. Navbar cố định, trong suốt pha màu */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(27, 20, 9, 0.75);
+  z-index: 10;
+}
+
+/* 6. Logo dùng font serif cho sang */
+.navbar-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  color: #fff;
+}
+
+/* 7. Link navbar */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+}
+.nav-links a,
+.btn-logout {
+  color: lightgreen;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+.nav-links a:hover,
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.btn-login-nav {
+  background-color: #fff;
+  color: #6b4f2f;
+  transition: background 0.3s;
+}
+.btn-login-nav:hover {
+  background-color: #f0e6da;
+}
+
+/* 8. Phần Hero chính */
+.home-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  padding: 0 1rem;
+  margin-top: 4rem; /* giữ khoảng dưới navbar */
+}
+/* Overlay tối giúp chữ nổi bật */
+.home-content::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+/* Tiêu đề */
+.home-content h1 {
+  position: relative;
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+/* Mô tả nhỏ */
+.home-content p {
+  position: relative;
+  font-size: 1.25rem;
+  max-width: 600px;
+  line-height: 1.6;
+  color: #f0f0f0;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+}
+
+/* 9. Button gradient */
+.btn-primary {
+  position: relative;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 2;
+}
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
