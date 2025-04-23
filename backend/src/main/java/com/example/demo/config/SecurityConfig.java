@@ -84,6 +84,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                 .formLogin(form -> form
                         .loginPage("/login") // The page user sees/is redirected to FOR form login
                         .defaultSuccessUrl("http://localhost:5173/home", true) // Redirect on successful form login
+                        .failureUrl("http://localhost:5173/login") // Redirect on failed login
                         .permitAll() // Allow access to the login page itself
                 )
                 // Configure OAuth2 Login
