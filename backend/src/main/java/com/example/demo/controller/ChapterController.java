@@ -62,5 +62,11 @@ public class ChapterController {
         return chapterService.getAllChapters(); // Now using the injected instance
     }
 
+    @ResponseBody
+    @GetMapping("/getChapter/{id}")
+    public Chapter getChapter(@PathVariable String id) {
+        return chapterService.getChapterById(id);
+    }
+
     // You can add other chapter-related endpoints here
 }

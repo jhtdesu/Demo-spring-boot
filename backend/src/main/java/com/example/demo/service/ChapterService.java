@@ -31,4 +31,8 @@ public class ChapterService {
     public List<Chapter> getAllChapters() {
         return chapterRepository.findAll(); // Correctly calling findAll() on the injected instance
     }
+
+    public Chapter getChapterById(String id) {
+        return chapterRepository.findById(id).orElse(null); // Correctly calling findById() on the injected instance
+    }
 }

@@ -38,7 +38,9 @@ const BookList = () => {
       <ul>
         {books.map(book => (
           <li key={book.id}>
-            Title: {book.title}, Author: {book.author}
+            <a href={`/getAllChapters`} style={{ textDecoration: 'none'}}>
+              Title: {book.title}, Author: {book.author}
+            </a>
           </li>
         ))}
       </ul>
