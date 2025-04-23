@@ -9,6 +9,8 @@ import BookList from './pages/getAllBooks.jsx';
 import ChapterList from './pages/getAllChapters.jsx';
 import Register from './pages/register.jsx';
 import Home from './pages/home.jsx'; // Tạo file Home.jsx như mình hướng dẫn ở trên
+import GetBookById from './pages/getBookId.jsx';
+import GetChapterById from './pages/getChapterId.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -19,6 +21,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/register" element={<Register />} />
         <Route path="/getAllBooks" element={<BookList />} />
         <Route path="/getAllChapters" element={<ChapterList/>}/>
+        <Route path="/getBook/:id" element={<GetBookById />} />
+        <Route path="/getChapter/:id" element={<GetChapterById/>}/>
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </BrowserRouter>

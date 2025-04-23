@@ -40,7 +40,6 @@ const ChapterList = () => {
                     <li key={chapter.id} style={{ marginBottom: '10px' }}>
                         <div style={{ wordWrap: 'break-word', maxWidth: '1200px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
                             <strong>Title:</strong> {chapter.title} <br />
-                            <strong>Content:</strong> {chapter.content}
                         </div>
                     </li>
                 ))}
