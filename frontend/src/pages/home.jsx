@@ -1,46 +1,38 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import '../styles/home.css';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
-  const navigate = useNavigate();
-  const isAuth = Boolean(localStorage.getItem('token'));
-
   return (
-    <div className="home-wrapper">
+    <>
       <nav className="navbar">
-        <div className="navbar-brand">📖 BookVerse</div>
-        <ul className="nav-links">
-          <li><Link to="/getAllBooks">Tất cả sách</Link></li>
-          {isAuth ? (
-            <li>
-              <button
-                onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}
-                className="btn-logout"
-              >
-                Đăng xuất
-              </button>
-            </li>
-          ) : (
-            <li>
-              <Link to="/login" className="btn-login-nav">Đăng nhập</Link>
-            </li>
-          )}
-        </ul>
+        <div className="navbar-logo">
+          <Link to="/" className="navbar-brand">📖 BookVerse</Link>
+        </div>
+        <div className="navbar-links">
+          <Link to="/" className="nav-link">Trang chủ</Link>
+          <Link to="/books" className="nav-link">Tất cả sách</Link>
+          <Link to="/login" className="nav-link">Đăng nhập</Link>
+        </div>
       </nav>
 
-      <main className="home-content" style={{ textAlign: 'center' }}>
-        <h1>Chào mừng đến với BookVerse</h1>
-        <p>
-          Nơi hội tụ những câu chuyện tuyệt vời. Hãy khám phá kho sách khổng lồ của chúng tôi!
-        </p>
-        {isAuth && (
-          <button className="btn-primary" onClick={() => navigate('/books')}>
-            Xem tất cả sách
-          </button>
-        )}
-      </main>
-    </div>
+      <div className="hero-section">
+        <div className="overlay" />
+        <div className="hero-content">
+          <h1 className="hero-title">
+            Chào mừng đến với <span className="hero-highlight">BookVerse</span>
+          </h1>
+          <p className="hero-subtitle">
+            Khám phá kho sách khổng lồ với vô vàn câu chuyện chờ bạn mở ra!
+          </p>
+
+          <div className="hero-buttons">
+            <Link to="/login" className="hero-btn login-btn">Đăng nhập</Link>
+            <Link to="/books" className="hero-btn books-btn">Tất cả sách</Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

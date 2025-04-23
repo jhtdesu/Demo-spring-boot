@@ -1,131 +1,145 @@
-/* src/styles/home.css */
-
-/* 1. Import font từ Google */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400&display=swap');
-
-/* 2. Reset cơ bản */
-html, body, #root {
-  height: 100%;
+/* Reset & font */
+html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* 3. Background toàn màn hình */
-body {
-  background: url('https://images.unsplash.com/photo-1524985069026-dd778a71c7b4') 
-    no-repeat center center/cover;
-}
-
-/* 4. Wrapper cho toàn page */
-.home-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-}
-
-/* 5. Navbar cố định, trong suốt pha màu */
+/* Navbar cố định đầu trang */
 .navbar {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: rgba(27, 20, 9, 0.75);
-  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0 2rem;
+  backdrop-filter: blur(8px);
 }
 
-/* 6. Logo dùng font serif cho sang */
 .navbar-brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.75rem;
-  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
 }
 
-/* 7. Link navbar */
-.nav-links {
-  list-style: none;
+.navbar-links {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #e87bf8;
+}
+
+/* Hero section chính */
+.hero-section {
+  margin-top: 60px; /* tránh đè navbar */
+  position: relative;
+  height: calc(100vh - 60px);
+  width: 100%;
+  background: url('/images/library.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: bold;
   margin: 0;
 }
-.nav-links a,
-.btn-logout {
-  color: lightgreen;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 500;
-  transition: background 0.3s;
-}
-.nav-links a:hover,
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-.btn-login-nav {
-  background-color: #fff;
-  color: #6b4f2f;
-  transition: background 0.3s;
-}
-.btn-login-nav:hover {
-  background-color: #f0e6da;
+
+.hero-highlight {
+  color: #e87bf8;
 }
 
-/* 8. Phần Hero chính */
-.home-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  text-align: center;
-  padding: 0 1rem;
-  margin-top: 4rem; /* giữ khoảng dưới navbar */
-}
-/* Overlay tối giúp chữ nổi bật */
-.home-content::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-}
-/* Tiêu đề */
-.home-content h1 {
-  position: relative;
-  font-family: 'Playfair Display', serif;
-  font-size: 4rem;
-  color: #fff;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
-}
-/* Mô tả nhỏ */
-.home-content p {
-  position: relative;
+.hero-subtitle {
   font-size: 1.25rem;
-  max-width: 600px;
-  line-height: 1.6;
-  color: #f0f0f0;
-  margin-bottom: 2rem;
-  text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* 9. Button gradient */
-.btn-primary {
-  position: relative;
-  padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  z-index: 2;
+.hero-buttons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
-.btn-primary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+
+.hero-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
+}
+
+.books-btn {
+  background-color: white;
+  color: #333;
+  border: 2px solid #007bff;
+}
+
+.books-btn:hover {
+  background-color: #f0f0f0;
+  color: #007bff;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .navbar-links {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 }
