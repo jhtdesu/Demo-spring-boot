@@ -11,7 +11,7 @@ const Home = () => {
         </div>
         <div className="navbar-links">
           <Link to="/" className="nav-link">Trang chủ</Link>
-          <Link to="/books" className="nav-link">Tất cả sách</Link>
+          <Link to="/getAllBooks" className="nav-link">Tất cả sách</Link>
           <Link to="/login" className="nav-link">Đăng nhập</Link>
         </div>
       </nav>
