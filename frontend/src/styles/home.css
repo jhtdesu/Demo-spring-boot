@@ -46,6 +46,21 @@ html, body {
   color: #e87bf8;
 }
 
+.nav-link.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+  color: white;
+  transition: color 0.3s;
+}
+
+.nav-link.logout-btn:hover {
+  color: #e87bf8;
+}
+
 /* Hero section chính */
 .hero-section {
   margin-top: 60px;

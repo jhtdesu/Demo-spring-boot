@@ -1,7 +1,10 @@
 $.get("/user", function(data) {
     $("#user").html(data.name);
-    $(".unauthenticated").hide()
-    $(".authenticated").show()
+    $(".unauthenticated").hide();
+    $(".authenticated").show();
+}).fail(function() {
+    $(".unauthenticated").show();
+    $(".authenticated").hide();
 });
 
 var logout = function () {
