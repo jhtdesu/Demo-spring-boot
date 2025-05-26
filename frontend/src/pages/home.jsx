@@ -12,6 +12,7 @@ const Home = () => {
         <div className="navbar-links">
           <Link to="/" className="nav-link">Trang chủ</Link>
           <Link to="/getAllBooks" className="nav-link">Tất cả sách</Link>
+          <Link to="/blog" className="nav-link">Blog</Link>
           <Link to="/login" className="nav-link">Đăng nhập</Link>
         </div>
       </nav>
@@ -28,7 +29,8 @@ const Home = () => {
 
           <div className="hero-buttons">
             <Link to="/login" className="hero-btn login-btn">Đăng nhập</Link>
-            <Link to="/books" className="hero-btn books-btn">Tất cả sách</Link>
+            <Link to="/getAllBooks" className="hero-btn books-btn">Tất cả sách</Link>
+            <Link to="/blog" className="hero-btn blog-btn">Blog</Link>
           </div>
         </div>
       </div>

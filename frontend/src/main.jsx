@@ -24,6 +24,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/getAllChapters" element={<ChapterList/>}/>
         <Route path="/getBook/:id" element={<GetBookById />} />
         <Route path="/getChapter/:id" element={<GetChapterById/>}/>
+        {/* Mount the blog app at /blog/* */}
+        <Route path="/blog/*" element={<App />} />
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </BrowserRouter>

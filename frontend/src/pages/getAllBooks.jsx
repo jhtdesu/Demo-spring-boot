@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './getAllBooks.css';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -28,22 +29,46 @@ const BookList = () => {
     fetchBooks();
   }, []);
 
-  if (loading) return <div>Loading books...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
-  if (books.length === 0) return <p>No books found.</p>;
+  if (loading) return (
+    <div className="loading-container">
+      Loading books...
+    </div>
+  );
+  
+  if (error) return (
+    <div className="error-container">
+      {error}
+    </div>
+  );
+  
+  if (books.length === 0) return (
+    <div className="no-books-container">
+      No books found.
+    </div>
+  );
 
   return (
-    <div>
-      <h1>Book List</h1>
-      <ul>
+    <div className="book-list-container">
+      <h1 className="book-list-title">
+        Book Collection
+      </h1>
+      <div className="book-grid">
         {books.map(book => (
-          <li key={book.id}>
-            <a href={`/getAllChapters`} style={{ textDecoration: 'none'}}>
-              Title: {book.title}, Author: {book.author}
+          <div key={book.id} className="book-card">
+            <a 
+              href={`/getAllChapters`} 
+              className="book-link"
+            >
+              <h2 className="book-title">
+                {book.title}
+              </h2>
+              <p className="book-author">
+                By {book.author}
+              </p>
             </a>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
