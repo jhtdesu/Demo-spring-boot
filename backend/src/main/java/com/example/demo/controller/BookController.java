@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Book;
 import com.example.demo.service.BookService;
@@ -19,9 +20,9 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@CrossOrigin(origins = { "http://localhost", "http://localhost:80" })
-
-@Controller
+@RestController
+@RequestMapping("/api/books")
+@CrossOrigin(origins = "https://backend-jh-cff06dd28ef7.herokuapp.com", allowCredentials = "true")
 public class BookController {
 
     @Autowired

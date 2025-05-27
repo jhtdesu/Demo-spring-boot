@@ -44,7 +44,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("http://localhost", "http://localhost:80"));
+                configuration.setAllowedOrigins(List.of("https://backend-jh-cff06dd28ef7.herokuapp.com"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
                 configuration.setAllowCredentials(true);
@@ -75,18 +75,21 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
-                                                .loginPage("http://localhost:8080/login")
-                                                .defaultSuccessUrl("http://localhost/home", true)
-                                                .failureUrl("http://localhost:8080/login")
+                                                .loginPage("https://backend-jh-cff06dd28ef7.herokuapp.com/login")
+                                                .defaultSuccessUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/home",
+                                                                true)
+                                                .failureUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/login")
                                                 .permitAll())
                                 .oauth2Login(oauth2 -> oauth2
-                                                .defaultSuccessUrl("http://localhost/home", true)
+                                                .defaultSuccessUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/home",
+                                                                true)
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-                                                .logoutSuccessUrl("http://localhost:8080/login?logout")
+                                                .logoutSuccessUrl(
+                                                                "https://backend-jh-cff06dd28ef7.herokuapp.com/login?logout")
                                                 .invalidateHttpSession(true)
                                                 .clearAuthentication(true)
                                                 .deleteCookies("JSESSIONID")
