@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/blog';
-const COMMENT_URL = 'http://localhost:8080/api/comments';
+const API_URL = 'https://backend-jh-cff06dd28ef7.herokuapp.com/api/blog';
+const COMMENT_URL = 'https://backend-jh-cff06dd28ef7.herokuapp.com/api/comments';
 
 const axiosInstance = axios.create({
   withCredentials: true
