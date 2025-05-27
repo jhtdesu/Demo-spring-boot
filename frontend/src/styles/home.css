@@ -67,7 +67,7 @@ html, body {
   position: relative;
   height: calc(100vh - 60px);
   width: 100%;
-  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,7 +80,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.15); /* lighter overlay */
 }
 
 .hero-content {
@@ -93,7 +93,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(30, 30, 30, 0.7);
+  background: rgba(30, 30, 30, 0.25); /* lighter glass effect */
   border-radius: 24px;
   max-width: 700px;
   width: 100%;

@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('/user');
+      const response = await axios.get('/user', { withCredentials: true });
       if (response.data) {
         setIsAuthenticated(true);
         setUser(response.data);
@@ -27,22 +27,41 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post('/login', credentials);
-      setIsAuthenticated(true);
-      setUser(response.data);
+      await axios.post('/login', credentials, { withCredentials: true });
+      // After login, fetch user profile using JWT cookie
+      try {
+        const meRes = await axios.get('/api/users/me', { withCredentials: true });
+        if (meRes.data && meRes.data.id) {
+          localStorage.setItem('userId', meRes.data.id);
+        }
+        if (meRes.data && meRes.data.email) {
+          localStorage.setItem('userEmail', meRes.data.email);
+        }
+        setIsAuthenticated(true);
+        setUser(meRes.data);
+      } catch (e) {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail');
+        setIsAuthenticated(false);
+        setUser(null);
+      }
       return true;
     } catch (error) {
       setIsAuthenticated(false);
       setUser(null);
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
       return false;
     }
   };
 
   const logout = async () => {
     try {
-      await axios.post('/logout');
+      await axios.post('/logout', {}, { withCredentials: true });
       setIsAuthenticated(false);
       setUser(null);
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userEmail');
     } catch (error) {
       console.error('Logout failed:', error);
     }

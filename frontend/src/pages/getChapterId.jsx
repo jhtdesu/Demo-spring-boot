@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom'; // Import useParams
+import Navbar from '../components/Navbar';
 
 const GetChapterById = () => {
     const { id: chapterIdFromUrl } = useParams();
@@ -65,30 +66,79 @@ const GetChapterById = () => {
 
     // --- Render Logic ---
     if (loading) {
-        return <div>Loading chapter details...</div>;
+        return (
+            <>
+                <Navbar />
+                <div>Loading chapter details...</div>
+            </>
+        );
     }
 
     if (error) {
-        return <div style={{ color: 'red' }}>{error}</div>;
+        return (
+            <>
+                <Navbar />
+                <div style={{ color: 'red' }}>{error}</div>
+            </>
+        );
     }
 
     if (!chapter) {
-        return <p>Chapter details could not be loaded or the chapter was not found.</p>;
+        return (
+            <>
+                <Navbar />
+                <p>Chapter details could not be loaded or the chapter was not found.</p>
+            </>
+        );
     }
 
     return (
-        <div style={{ overflow: 'auto', maxHeight: '80vh', padding: '10px' }}>
-            <h1>Chapter Details</h1>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-                <li style={{ marginBottom: '10px' }}>
-                    <div style={{ wordWrap: 'break-word', maxWidth: '1200px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-                        <strong>ID:</strong> {chapter.id} <br />
-                        <strong>Title:</strong> {chapter.title} <br />
-                        <strong>Content:</strong> {chapter.content}
-                    </div>
+        <>
+            <Navbar />
+            <div style={{
+                minHeight: 'calc(100vh - 80px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'none',
+                marginTop: '80px',
+            }}>
+                <div style={{
+                    width: '100%',
+                    maxWidth: 800,
+                    padding: '32px',
+                    background: 'rgba(255,255,255,0.97)',
+                    borderRadius: '18px',
+                    boxShadow: '0 4px 24px rgba(44,62,80,0.10)',
+                    fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif'
+                }}>
+                    <h1 style={{ fontSize: '2.2rem', color: '#2c3e50', marginBottom: 24, fontWeight: 700, letterSpacing: '-1px' }}>Chapter Details</h1>
+                    <ul style={{ listStyle: 'none', padding: 0, marginBottom: 32 }}>
+                        <li style={{ marginBottom: 18 }}>
+                            <span style={{ color: '#888', fontWeight: 500 }}>ID:</span> <span style={{ color: '#222' }}>{chapter.id}</span>
+                        </li>
+                        <li style={{ marginBottom: 18 }}>
+                            <span style={{ color: '#888', fontWeight: 500 }}>Title:</span> <span style={{ color: '#3498db', fontWeight: 600, fontSize: '1.2rem' }}>{chapter.title}</span>
+                        </li>
+                        <li>
+                            <span style={{ color: '#888', fontWeight: 500 }}>Content:</span>
+                            <div style={{
+                                background: '#f4f8fb',
+                                borderRadius: '8px',
+                                padding: '18px',
+                                marginTop: '8px',
+                                color: '#222',
+                                fontSize: '1.08rem',
+                                lineHeight: 1.7,
+                                boxShadow: '0 2px 8px rgba(52,152,219,0.07)',
+                                wordBreak: 'break-word',
+                                overflowX: 'auto'
+                            }}>{chapter.content}</div>
                 </li>
             </ul>
         </div>
+            </div>
+        </>
     );
 };
 

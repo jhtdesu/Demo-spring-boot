@@ -2,32 +2,14 @@ import React from 'react';
 import '../styles/home.css';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
 
 const Home = () => {
-  const { isAuthenticated, logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-  };
+  const { isAuthenticated } = useAuth();
 
   return (
     <>
-      <nav className="navbar">
-        <div className="navbar-logo">
-          <Link to="/" className="navbar-brand">📖 BookVerse</Link>
-        </div>
-        <div className="navbar-links">
-          <Link to="/" className="nav-link">Trang chủ</Link>
-          <Link to="/getAllBooks" className="nav-link">Tất cả sách</Link>
-          <Link to="/blog" className="nav-link">Blog</Link>
-          {isAuthenticated ? (
-            <button onClick={handleLogout} className="nav-link logout-btn">Đăng xuất</button>
-          ) : (
-            <Link to="/login" className="nav-link">Đăng nhập</Link>
-          )}
-        </div>
-      </nav>
-
+      <Navbar />
       <div className="hero-section">
         <div className="overlay" />
         <div className="hero-content">

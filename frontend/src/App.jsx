@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import BlogList from './components/blog/BlogList';
 import BlogPost from './components/blog/BlogPost';
 import BlogForm from './components/blog/BlogForm';
+import UserProfile from './pages/UserProfile';
 import './App.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="new" element={<BlogForm />} />
           <Route path="edit/:id" element={<BlogForm />} />
           <Route path=":id" element={<BlogPost />} />
+          <Route path="profile" element={<UserProfile />} />
         </Routes>
       </main>
     </div>

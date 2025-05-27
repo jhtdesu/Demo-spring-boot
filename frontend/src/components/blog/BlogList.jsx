@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { blogApi } from '../../api/blogApi';
+import Navbar from '../Navbar';
 import './BlogList.css';
 
 const BlogList = () => {
@@ -29,13 +30,28 @@ const BlogList = () => {
         fetchPosts();
     }, []);
 
-    if (loading) return <div className="loading">Loading...</div>;
-    if (error) return <div className="error">{error}</div>;
+    if (loading) return (
+        <>
+            <Navbar />
+            <div className="loading">Loading...</div>
+        </>
+    );
+    
+    if (error) return (
+        <>
+            <Navbar />
+            <div className="error">{error}</div>
+        </>
+    );
 
     return (
+        <>
+            <Navbar />
         <div className="blog-list">
+                <div className="blog-header">
             <h1>Blog Posts</h1>
             <Link to="/blog/new" className="new-post-button">Create New Post</Link>
+                </div>
             <div className="posts-grid">
                 {posts.map((post) => (
                     <div key={post.id} className="post-card">
@@ -58,6 +74,7 @@ const BlogList = () => {
                 ))}
             </div>
         </div>
+        </>
     );
 };
 

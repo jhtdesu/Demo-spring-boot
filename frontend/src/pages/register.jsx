@@ -27,21 +27,19 @@ const Register = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:8086/register', {
+      const res = await fetch('http://localhost:8086/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           name: form.name,
           email: form.email,
           password: form.password
         })
       });
 
-      if (res.ok) {
-        // Nếu backend trả 200, redirect về front-end login
+      if (res.status === 201) {
         navigate('/login');
       } else {
-        // đọc message lỗi từ backend
         const text = await res.text();
         setError(text || 'Đăng ký thất bại');
       }

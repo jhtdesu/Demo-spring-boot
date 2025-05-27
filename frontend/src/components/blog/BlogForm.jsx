@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { blogApi } from '../../api/blogApi';
+import { useAuth } from '../../context/AuthContext';
 import './BlogForm.css';
 
 const BlogForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         title: '',
         content: '',
@@ -31,8 +33,10 @@ const BlogForm = () => {
                 }
             };
             fetchPost();
+        } else if (user) {
+            setFormData(prev => ({ ...prev, author: user.username || user.name || '' }));
         }
-    }, [id]);
+    }, [id, user]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -50,7 +54,8 @@ const BlogForm = () => {
         try {
             const postData = {
                 ...formData,
-                tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+                tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+                author: user.username || user.name || ''
             };
 
             if (id) {
@@ -89,8 +94,8 @@ const BlogForm = () => {
                         id="author"
                         name="author"
                         value={formData.author}
-                        onChange={handleChange}
-                        required
+                        readOnly
+                        disabled
                     />
                 </div>
 

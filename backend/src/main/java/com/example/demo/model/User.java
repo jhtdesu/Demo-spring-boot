@@ -1,4 +1,3 @@
-
 package com.example.demo.model;
 
 import org.springframework.data.annotation.Id;
@@ -11,21 +10,23 @@ public class User {
     private String name;
     private String password;
     private String email;
+    private boolean isModerator;
+    private String profilePicture;
+    private String bio;
+    private String location;
+    private String joinDate;
 
-    public User(
-        String id, 
-        String name,
-        String password, 
-        String email) {
-        super();
+    public User() {
+        // Empty constructor
+    }
+
+    public User(String id, String name, String password, String email) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.email = email;
-    }
-
-    public User() {
-    // Constructor rỗng
+        this.isModerator = false; // Default to false
+        this.joinDate = java.time.LocalDateTime.now().toString();
     }
 
     public String getId() {
@@ -58,5 +59,45 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isModerator() {
+        return isModerator;
+    }
+
+    public void setModerator(boolean isModerator) {
+        this.isModerator = isModerator;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
     }
 }

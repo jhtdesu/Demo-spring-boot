@@ -23,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // Import U
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import com.example.demo.security.CustomOAuth2UserService;
 
 import java.util.List; // Import List
 
@@ -35,6 +36,9 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         // Keep JwtFilter autowired if you plan to use it later
         // @Autowired
         // private JwtFilter jwtFilter;
+
+        @Autowired
+        private CustomOAuth2UserService customOAuth2UserService;
 
         // Defining CORS configuration as a bean is generally preferred
         // when using http.cors(Customizer.withDefaults())
@@ -106,11 +110,8 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .defaultSuccessUrl("http://localhost:5173/home", true) // Redirect on
                                                                                                        // successful
                                                                                                        // OAuth2 login
-                                // Optionally configure user info endpoint if needed
-                                // .userInfoEndpoint(userInfo -> userInfo
-                                // .userService(...) // Custom OAuth2 user service
-                                // )
-                                )
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService)))
                                 // Configure logout
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

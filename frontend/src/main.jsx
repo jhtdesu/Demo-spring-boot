@@ -12,6 +12,7 @@ import Register from './pages/register.jsx';
 import Home from './pages/home.jsx'; // Tạo file Home.jsx như mình hướng dẫn ở trên
 import GetBookById from './pages/getBookId.jsx';
 import GetChapterById from './pages/getChapterId.jsx';
+import UserProfile from './pages/UserProfile.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -26,6 +27,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/getAllChapters" element={<ChapterList/>}/>
           <Route path="/getBook/:id" element={<GetBookById />} />
           <Route path="/getChapter/:id" element={<GetChapterById/>}/>
+          <Route path="/profile" element={<UserProfile />} />
           {/* Mount the blog app at /blog/* */}
           <Route path="/blog/*" element={<App />} />
           {/* Thêm các route khác nếu cần */}
