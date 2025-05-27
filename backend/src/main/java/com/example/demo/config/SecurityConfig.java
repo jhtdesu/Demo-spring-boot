@@ -44,7 +44,9 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("https://backend-jh-cff06dd28ef7.herokuapp.com"));
+                configuration.setAllowedOrigins(List.of(
+                                "https://backend-jh-cff06dd28ef7.herokuapp.com",
+                                "https://frontend-jh-74d9be1b01e4.herokuapp.com"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
                 configuration.setAllowCredentials(true);
@@ -75,13 +77,15 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
-                                                .loginPage("https://backend-jh-cff06dd28ef7.herokuapp.com/login")
-                                                .defaultSuccessUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/home",
+                                                .loginPage("https://frontend-jh-74d9be1b01e4.herokuapp.com/login")
+                                                .defaultSuccessUrl(
+                                                                "https://frontend-jh-74d9be1b01e4.herokuapp.com/home",
                                                                 true)
-                                                .failureUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/login")
+                                                .failureUrl("https://frontend-jh-74d9be1b01e4.herokuapp.com/login")
                                                 .permitAll())
                                 .oauth2Login(oauth2 -> oauth2
-                                                .defaultSuccessUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/home",
+                                                .defaultSuccessUrl(
+                                                                "https://frontend-jh-74d9be1b01e4.herokuapp.com/home",
                                                                 true)
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(customOAuth2UserService)))
@@ -89,7 +93,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                                                 .logoutSuccessUrl(
-                                                                "https://backend-jh-cff06dd28ef7.herokuapp.com/login?logout")
+                                                                "https://frontend-jh-74d9be1b01e4.herokuapp.com/login?logout")
                                                 .invalidateHttpSession(true)
                                                 .clearAuthentication(true)
                                                 .deleteCookies("JSESSIONID")
