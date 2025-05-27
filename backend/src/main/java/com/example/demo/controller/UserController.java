@@ -1,57 +1,93 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.example.demo.model.User;
-import com.example.demo.UserService;
-
+import com.example.demo.service.UserService;
 import java.util.List;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-@Controller
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/addUserForm")
-    public String showAddUserForm() {
-        return "add-user";
-    }
-
-    @PostMapping("/addUser")
-    public String addUser(@RequestParam String name, @RequestParam String email, Model model) {
-        User newUser = new User(null, name, email);
-        userService.addUser(newUser);
-        String message = "User " + name + " with email " + email + " added successfully!";
-        model.addAttribute("message", message);
-        return "add-user";
-    }
-
-    @ResponseBody
-    @GetMapping("/getAllUsers")
+    @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @DeleteMapping("/deleteUser/{id}") // New endpoint for deleting a user
-    @ResponseBody // Typically, you might return a status or a message
-    public String deleteUser(@PathVariable String id) {
-        userService.deleteUser(id);
-        return "User with ID " + id + " deleted successfully!";
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
+        try {
+            User user = userService.getUserById(id);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/editUser")
-    @ResponseBody
-    public User editUser(@RequestBody User user) {
-        return userService.editUser(user);
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        try {
+            User user = userService.getUserByEmail(email);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<User> updateProfile(@PathVariable String id, @RequestBody User updatedUser) {
+        try {
+            User user = userService.updateProfile(id, updatedUser);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}/moderator")
+    public ResponseEntity<User> setModeratorStatus(
+            @PathVariable String id,
+            @RequestParam boolean isModerator) {
+        try {
+            User user = userService.setModeratorStatus(id, isModerator);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error deleting user: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal Object principal) {
+        String email = null;
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+            email = userDetails.getUsername();
+        } else if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+            email = (String) oauth2User.getAttribute("email");
+        }
+        if (email == null) {
+            return ResponseEntity.status(401).build();
+        }
+        User user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(user);
     }
 }

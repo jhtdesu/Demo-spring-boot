@@ -1,0 +1,59 @@
+/* src/components/getAllChapters.css */
+
+.chapter-list-container {
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff; /* Giữ trắng để nổi bật trên ảnh nền */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.chapter-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.chapter-card {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  word-break: break-word;
+}
+
+.chapter-title {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.chapter-content {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* message trạng thái */
+.status {
+  text-align: center;
+  font-size: 1rem;
+  padding: 60px 0;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.status.error {
+  color: #ff6666;
+  text-shadow: none;
+}

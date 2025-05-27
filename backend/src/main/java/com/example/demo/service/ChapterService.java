@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +30,9 @@ public class ChapterService {
 
     public List<Chapter> getAllChapters() {
         return chapterRepository.findAll(); // Correctly calling findAll() on the injected instance
+    }
+
+    public Chapter getChapterById(String id) {
+        return chapterRepository.findById(id).orElse(null); // Correctly calling findById() on the injected instance
     }
 }
