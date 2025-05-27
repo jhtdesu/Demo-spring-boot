@@ -33,7 +33,7 @@ const GetBookById = () => {
             try {
                 // --- Use the bookIdFromUrl obtained from useParams ---
                 console.log(`Workspaceing book with ID from URL: ${bookIdFromUrl}`);
-                const bookRes = await axios.get(`http://localhost:8086/getBook/${bookIdFromUrl}`, { withCredentials: true });
+                const bookRes = await axios.get(`http://localhost:8080/getBook/${bookIdFromUrl}`, { withCredentials: true });
 
                 // --- Handle the response ---
                 if (bookRes.data && typeof bookRes.data === 'object' && !Array.isArray(bookRes.data)) {
@@ -46,7 +46,7 @@ const GetBookById = () => {
                 }
 
                 // Fetch all chapters
-                const chaptersRes = await axios.get('http://localhost:8086/getAllChapters', { withCredentials: true });
+                const chaptersRes = await axios.get('http://localhost:8080/getAllChapters', { withCredentials: true });
                 if (Array.isArray(chaptersRes.data)) {
                     // Filter chapters for this book
                     const filtered = chaptersRes.data.filter(ch => ch.book && ch.book.id === bookIdFromUrl);

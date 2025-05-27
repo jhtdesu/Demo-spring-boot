@@ -14,7 +14,7 @@ const Login = () => {
 
     const formData = new FormData(e.target);
     const credentials = {
-      username: formData.get('username'),
+      email: formData.get('email'),
       password: formData.get('password')
     };
 
@@ -39,14 +39,14 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
-          <input type="text" name="username" placeholder="Tên đăng nhập" required />
+          <input type="email" name="email" placeholder="Email" required />
           <input type="password" name="password" placeholder="Mật khẩu" required />
           <button type="submit" className="btn-login">Đăng nhập</button>
         </form>
 
         <div className="divider">hoặc</div>
 
-        <a href="http://localhost:8086/oauth2/authorization/google" className="btn-google">
+        <a href="http://localhost:8080/oauth2/authorization/google" className="btn-google">
           Đăng nhập với Google
         </a>
 

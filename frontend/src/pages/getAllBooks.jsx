@@ -14,7 +14,7 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:8086/getAllBooks', { withCredentials: true });
+        const response = await axios.get('http://localhost:8080/getAllBooks', { withCredentials: true });
         if (Array.isArray(response.data)) {
           setBooks(response.data);
           console.log('Books:', response.data);
@@ -58,30 +58,30 @@ const BookList = () => {
   if (loading) return (
     <>
       <Navbar />
-      <div className="loading-container">
+    <div className="loading-container">
         <div className="loading-spinner"></div>
         <p>Loading our library collection...</p>
-      </div>
+    </div>
     </>
   );
   
   if (error) return (
     <>
       <Navbar />
-      <div className="error-container">
+    <div className="error-container">
         <i className="error-icon">⚠️</i>
-        {error}
-      </div>
+      {error}
+    </div>
     </>
   );
   
   if (books.length === 0) return (
     <>
       <Navbar />
-      <div className="no-books-container">
+    <div className="no-books-container">
         <i className="empty-icon">📚</i>
         <p>No books found in our collection.</p>
-      </div>
+    </div>
     </>
   );
 
@@ -109,14 +109,14 @@ const BookList = () => {
             }}
           />
         </div>
-        <div className="book-grid">
+      <div className="book-grid">
           {currentBooks.length === 0 ? (
             <div style={{ gridColumn: '1/-1', textAlign: 'center', color: '#888', fontStyle: 'italic' }}>
               No books match your search.
             </div>
           ) : (
             currentBooks.map(book => (
-              <div key={book.id} className="book-card">
+          <div key={book.id} className="book-card">
                 <div className="book-cover">
                   <div className="book-spine"></div>
                   <div className="book-pages"></div>

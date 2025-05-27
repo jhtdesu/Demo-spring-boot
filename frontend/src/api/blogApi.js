@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8086/api/blog';
-const COMMENT_URL = 'http://localhost:8086/api/comments';
+const API_URL = 'http://localhost:8080/api/blog';
+const COMMENT_URL = 'http://localhost:8080/api/comments';
 
 const axiosInstance = axios.create({
   withCredentials: true

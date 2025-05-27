@@ -33,9 +33,8 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                               // CorsConfigurationSource bean is often preferred when using
                               // http.cors(Customizer.withDefaults())
 
-        // Keep JwtFilter autowired if you plan to use it later
-        // @Autowired
-        // private JwtFilter jwtFilter;
+        @Autowired
+        private JwtFilter jwtFilter;
 
         @Autowired
         private CustomOAuth2UserService customOAuth2UserService;
@@ -45,90 +44,54 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                // Make sure this matches your frontend development server URL
-                configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+                configuration.setAllowedOrigins(List.of("http://localhost", "http://localhost:80"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                configuration.setAllowedHeaders(List.of("*")); // Or specific headers like "Authorization",
-                                                               // "Content-Type"
-                configuration.setAllowCredentials(true); // Crucial for cookies/sessions
-                configuration.setMaxAge(3600L); // Optional: How long cache preflight response
+                configuration.setAllowedHeaders(List.of("*"));
+                configuration.setAllowCredentials(true);
+                configuration.setMaxAge(3600L);
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", configuration); // Apply this CORS config to all paths
+                source.registerCorsConfiguration("/**", configuration);
                 return source;
         }
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                // Configure CORS using the bean defined above
                                 .cors(Customizer.withDefaults())
-                                // CSRF is disabled - common for SPAs, but ensure you understand implications
-                                // If using session cookies AND modifying state (POST/PUT/DELETE), CSRF is
-                                // recommended
                                 .csrf(csrf -> csrf.disable())
-                                // Session management: Use sessions if needed (required for standard oauth2Login
-                                // state)
                                 .sessionManagement(sessionManagement -> sessionManagement
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                                // Define authorization rules
                                 .authorizeHttpRequests(auth -> auth
-                                                // Permit access to static resources, auth endpoints, error pages etc.
-                                                // Make sure paths match your project structure
                                                 .requestMatchers(
-                                                                "/", // Often needed for root path
-                                                                "/index.html", // If serving index.html from backend
-                                                                "/static/**", // General static resources folder
-                                                                "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", // Common
-                                                                                                                 // static
-                                                                                                                 // file
-                                                                                                                 // types
-                                                                "/home", // Your specific permitted paths
-                                                                "/login", // Still permit access TO the login page
-                                                                          // itself
+                                                                "/",
+                                                                "/index.html",
+                                                                "/static/**",
+                                                                "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg",
+                                                                "/home",
+                                                                "/login",
                                                                 "/register",
                                                                 "/error",
-                                                                "/api/auth/**" // Your JWT auth path if you re-enable it
-                                                ).permitAll()
-                                                // All other requests must be authenticated
+                                                                "/api/auth/**")
+                                                .permitAll()
                                                 .anyRequest().authenticated())
-                                // Configure form login if you want to support username/password alongside
-                                // OAuth2
                                 .formLogin(form -> form
-                                                .loginPage("/login") // The page user sees/is redirected to FOR form
-                                                                     // login
-                                                .defaultSuccessUrl("http://localhost:5173/home", true) // Redirect on
-                                                                                                       // successful
-                                                                                                       // form login
-                                                .failureUrl("http://localhost:5173/login") // Redirect on failed login
-                                                .permitAll() // Allow access to the login page itself
-                                )
-                                // Configure OAuth2 Login
+                                                .loginPage("http://localhost:8080/login")
+                                                .defaultSuccessUrl("http://localhost/home", true)
+                                                .failureUrl("http://localhost:8080/login")
+                                                .permitAll())
                                 .oauth2Login(oauth2 -> oauth2
-                                                // ** REMOVED .loginPage("/login") **
-                                                // Now Spring Security will redirect directly to the OAuth2 provider
-                                                // when an unauthenticated request hits a protected resource.
-                                                .defaultSuccessUrl("http://localhost:5173/home", true) // Redirect on
-                                                                                                       // successful
-                                                                                                       // OAuth2 login
+                                                .defaultSuccessUrl("http://localhost/home", true)
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(customOAuth2UserService)))
-                                // Configure logout
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()) // Return
-                                                                                                                     // 200
-                                                                                                                     // OK
-                                                                                                                     // for
-                                                                                                                     // AJAX/API
-                                                .logoutSuccessUrl("http://localhost:5173/login?logout") // For browser
-                                                                                                        // navigation
+                                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+                                                .logoutSuccessUrl("http://localhost:8080/login?logout")
                                                 .invalidateHttpSession(true)
                                                 .clearAuthentication(true)
                                                 .deleteCookies("JSESSIONID")
-                                                .permitAll() // Allow access to the logout URL
-                                );
-                // Add JWT filter *before* the standard auth filters IF/WHEN you re-enable it
-                // http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                                                .permitAll());
+                http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 // Explicitly configure session repository (though IF_REQUIRED usually handles
                 // this)
