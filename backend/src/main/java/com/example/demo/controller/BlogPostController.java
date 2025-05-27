@@ -9,7 +9,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/blog")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = { "https://backend-jh-cff06dd28ef7.herokuapp.com",
+        "https://frontend-jh-74d9be1b01e4.herokuapp.com" })
 public class BlogPostController {
 
     @Autowired

@@ -11,8 +11,9 @@
 // @Override
 // public void addCorsMappings(CorsRegistry registry) {
 // registry.addMapping("/**") // Apply CORS to all paths in your API
-// .allowedOrigins("https://backend-jh-cff06dd28ef7.herokuapp.com") // Allow
-// requests from your frontend origin
+// .allowedOrigins("https://backend-jh-cff06dd28ef7.herokuapp.com",
+// "https://frontend-jh-74d9be1b01e4.herokuapp.com") // Allow requests from your
+// frontend origin
 // .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allowed HTTP
 // methods
 // .allowedHeaders("*") // Allow all headers

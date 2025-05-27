@@ -11,7 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "https://backend-jh-cff06dd28ef7.herokuapp.com", allowCredentials = "true")
+@CrossOrigin(origins = { "https://backend-jh-cff06dd28ef7.herokuapp.com",
+        "https://frontend-jh-74d9be1b01e4.herokuapp.com" }, allowCredentials = "true")
 public class UserController {
     @Autowired
     private UserService userService;
