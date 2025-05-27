@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      await axios.post('/login', credentials, { withCredentials: true });
+      await axios.post('/api/auth/login', credentials, { withCredentials: true });
       // After login, fetch user profile using JWT cookie
       try {
         const meRes = await axios.get('/api/users/me', { withCredentials: true });

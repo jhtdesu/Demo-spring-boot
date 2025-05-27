@@ -18,7 +18,7 @@ const UserProfile = () => {
         if (!userId) {
           throw new Error('No user ID found');
         }
-        const response = await axios.get(`http://localhost:8086/api/users/${userId}`, {
+        const response = await axios.get(`http://localhost:8080/api/users/${userId}`, {
           withCredentials: true
         });
         setUser(response.data);
@@ -41,7 +41,7 @@ const UserProfile = () => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:8086/api/users/${user.id}/profile`,
+        `http://localhost:8080/api/users/${user.id}/profile`,
         editedUser,
         { withCredentials: true }
       );

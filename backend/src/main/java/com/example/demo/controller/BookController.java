@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@CrossOrigin(origins = "http://localhost:5173/")
+@CrossOrigin(origins = { "http://localhost", "http://localhost:80" })
 
 @Controller
 public class BookController {

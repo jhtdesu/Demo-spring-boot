@@ -33,9 +33,9 @@ public class UserService {
     }
 
     public void register(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    userRepository.save(user);
+}
 
     // New methods for profile management
     public User updateProfile(String userId, User updatedUser) {
