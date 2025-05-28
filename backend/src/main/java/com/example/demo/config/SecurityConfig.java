@@ -50,7 +50,9 @@ public class SecurityConfig {
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("https://frontend-jh-74d9be1b01e4.herokuapp.com"));
+                configuration.setAllowedOrigins(List.of(
+                                "https://frontend-jh-74d9be1b01e4.herokuapp.com",
+                                "https://backend-jh-cff06dd28ef7.herokuapp.com"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
                 configuration.setExposedHeaders(List.of("Set-Cookie"));
@@ -63,7 +65,7 @@ public class SecurityConfig {
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                logger.info("Configuring SecurityFilterChain. customOAuth2UserService: {}", customOAuth2UserService);
+                logger.info("Configuring SecurityFilterChain");
                 http
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
@@ -82,7 +84,8 @@ public class SecurityConfig {
                                                                 "/api/auth/login",
                                                                 "/api/auth/register",
                                                                 "/oauth2/**",
-                                                                "/login/oauth2/**")
+                                                                "/login/oauth2/**",
+                                                                "/api/auth/google/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
@@ -119,6 +122,7 @@ public class SecurityConfig {
                                 org.springframework.security.oauth2.core.user.OAuth2User oauth2User = oauthToken
                                                 .getPrincipal();
                                 email = (String) oauth2User.getAttributes().get("email");
+                                logger.info("OAuth2 login successful for email: {}", email);
                         }
                         if (email != null) {
                                 String jwtToken = jwtUtil.generateToken(email);

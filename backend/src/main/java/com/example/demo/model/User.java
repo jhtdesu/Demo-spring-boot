@@ -15,6 +15,8 @@ public class User {
     private String bio;
     private String location;
     private String joinDate;
+    private String provider; // "local" or "google"
+    private String providerId; // Google ID for OAuth2 users
 
     public User() {
     }
@@ -26,6 +28,7 @@ public class User {
         this.email = email;
         this.isModerator = false;
         this.joinDate = java.time.LocalDateTime.now().toString();
+        this.provider = "local";
     }
 
     public String getId() {
@@ -98,5 +101,21 @@ public class User {
 
     public void setJoinDate(String joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
     }
 }
