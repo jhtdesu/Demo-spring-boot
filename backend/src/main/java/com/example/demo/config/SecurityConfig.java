@@ -134,36 +134,34 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
                 return (request, response, authentication) -> {
-                        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-                        String jwtToken = (String) oauth2User.getAttribute("jwt_token");
-
+                        String jwtToken = null;
+                        String email = null;
+                        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken oauthToken) {
+                                org.springframework.security.oauth2.core.user.OAuth2User oauth2User = oauthToken
+                                                .getPrincipal();
+                                jwtToken = (String) oauth2User.getAttributes().get("jwt_token");
+                                email = (String) oauth2User.getAttributes().get("email");
+                        }
                         logger.info("Authentication success handler called. JWT token present: {}", jwtToken != null);
-
                         if (jwtToken != null) {
-                                // Set JWT as HttpOnly cookie
                                 ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
                                                 .httpOnly(true)
                                                 .secure(true)
                                                 .path("/")
-                                                .maxAge(24 * 60 * 60) // 24 hours
+                                                .maxAge(24 * 60 * 60)
                                                 .sameSite("None")
                                                 .build();
-
                                 response.addHeader("Set-Cookie", cookie.toString());
                                 logger.info("JWT cookie set successfully");
-
-                                // Also set the token in the response body for debugging
                                 response.setContentType("application/json");
-                                response.getWriter().write("{\"token\": \"" + jwtToken + "\", \"user\": \""
-                                                + oauth2User.getAttribute("email") + "\"}");
+                                response.getWriter().write(
+                                                "{\"token\": \"" + jwtToken + "\", \"user\": \"" + email + "\"}");
                         } else {
                                 logger.error("JWT token not found in OAuth2 user attributes");
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                                 response.getWriter().write("{\"error\": \"JWT token not found\"}");
                                 return;
                         }
-
-                        // Redirect to frontend
                         response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
                 };
         }
