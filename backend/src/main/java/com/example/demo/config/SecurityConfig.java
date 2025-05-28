@@ -117,10 +117,18 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                 return authConfig.getAuthenticationManager();
         }
 
-        // Remove the WebMvcConfigurer implementation for CORS if using the
-        // CorsConfigurationSource bean
-        // @Override
-        // public void addCorsMappings(CorsRegistry registry) {
-        // // Configuration moved to CorsConfigurationSource bean
-        // }
+        @Bean
+        public org.springframework.web.servlet.config.annotation.WebMvcConfigurer corsConfigurer() {
+                return new org.springframework.web.servlet.config.annotation.WebMvcConfigurer() {
+                        @Override
+                        public void addCorsMappings(
+                                        org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
+                                registry.addMapping("/**")
+                                                .allowedOrigins("https://frontend-jh-74d9be1b01e4.herokuapp.com")
+                                                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                                                .allowedHeaders("*")
+                                                .allowCredentials(true);
+                        }
+                };
+        }
 }
