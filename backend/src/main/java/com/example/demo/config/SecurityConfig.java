@@ -137,16 +137,30 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
                         String jwtToken = (String) oauth2User.getAttribute("jwt_token");
 
+                        logger.info("Authentication success handler called. JWT token present: {}", jwtToken != null);
+
                         if (jwtToken != null) {
                                 // Set JWT as HttpOnly cookie
                                 ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
                                                 .httpOnly(true)
                                                 .secure(true)
                                                 .path("/")
-                                                .maxAge(24 * 60 * 60)
+                                                .maxAge(24 * 60 * 60) // 24 hours
                                                 .sameSite("None")
                                                 .build();
+
                                 response.addHeader("Set-Cookie", cookie.toString());
+                                logger.info("JWT cookie set successfully");
+
+                                // Also set the token in the response body for debugging
+                                response.setContentType("application/json");
+                                response.getWriter().write("{\"token\": \"" + jwtToken + "\", \"user\": \""
+                                                + oauth2User.getAttribute("email") + "\"}");
+                        } else {
+                                logger.error("JWT token not found in OAuth2 user attributes");
+                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                                response.getWriter().write("{\"error\": \"JWT token not found\"}");
+                                return;
                         }
 
                         // Redirect to frontend

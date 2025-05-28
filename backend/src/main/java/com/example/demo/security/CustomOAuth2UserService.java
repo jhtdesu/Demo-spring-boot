@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import java.util.Collections;
 import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -42,6 +43,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
 
+        logger.info("Processing OAuth2 user: email={}, name={}", email, name);
+
         // Check if user exists in database
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> {
@@ -56,12 +59,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String token = jwtUtil.generateToken(email);
         logger.info("Generated JWT token for user: {}", email);
 
-        // Add JWT token to attributes
-        attributes.put("jwt_token", token);
+        // Create a new map with all attributes plus the JWT token
+        Map<String, Object> newAttributes = new HashMap<>(attributes);
+        newAttributes.put("jwt_token", token);
+        newAttributes.put("user_id", user.getId());
 
         return new DefaultOAuth2User(
                 oauth2User.getAuthorities(),
-                attributes,
+                newAttributes,
                 "email" // Use email as the name attribute key
         );
     }
