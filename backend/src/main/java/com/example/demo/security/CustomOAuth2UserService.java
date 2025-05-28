@@ -35,30 +35,30 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         logger.info("OAuth2 user details - email: {}, name: {}, providerId: {}", email, name, providerId);
 
+        // Always create or update user with latest OAuth2 data
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    logger.info("Creating new user for email: {}", email);
-                    User newUser = new User();
-                    newUser.setEmail(email);
-                    newUser.setName(name != null ? name : "No Name");
-                    newUser.setProvider("google");
-                    newUser.setProviderId(providerId);
-                    newUser.setProfilePicture(picture);
-                    newUser.setModerator(false);
-                    newUser.setBio("");
-                    newUser.setLocation("");
-                    newUser.setJoinDate(java.time.LocalDateTime.now().toString());
-                    return userRepository.save(newUser);
-                });
+                .orElse(new User()); // Create new user if not exists
 
-        // Always update the user with the latest OAuth2 data
-        user.setName(name != null ? name : user.getName());
+        // Update all user fields with latest OAuth2 data
+        user.setEmail(email);
+        user.setName(name != null ? name : "No Name");
         user.setProvider("google");
         user.setProviderId(providerId);
-        if (picture != null) {
-            user.setProfilePicture(picture);
+        user.setProfilePicture(picture);
+        if (user.getJoinDate() == null) {
+            user.setJoinDate(java.time.LocalDateTime.now().toString());
         }
-        userRepository.save(user);
+        if (user.getBio() == null) {
+            user.setBio("");
+        }
+        if (user.getLocation() == null) {
+            user.setLocation("");
+        }
+        user.setModerator(false);
+
+        // Save the updated user
+        User savedUser = userRepository.save(user);
+        logger.info("User saved/updated successfully: {}", savedUser.getEmail());
 
         return oAuth2User;
     }
