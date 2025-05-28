@@ -145,7 +145,7 @@ public class AuthController {
         String email = null;
         if (principal == null) {
             logger.warn("No principal found in request");
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body("Unauthorized");
         }
 
         if (principal instanceof UserDetails userDetails) {
@@ -156,14 +156,14 @@ public class AuthController {
 
         if (email == null) {
             logger.warn("No email found in principal");
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).body("Unauthorized");
         }
 
         // Always get fresh user data
         User user = userService.getUserByEmail(email);
         if (user == null) {
             logger.error("User not found for email: {}", email);
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.status(404).body("User not found");
         }
 
         logger.info("Retrieved user data for: {}", email);
