@@ -27,6 +27,10 @@ import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletResponse;
 import com.example.demo.security.JwtUtil;
 import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -137,6 +141,19 @@ public class SecurityConfig {
                                                         .build();
                                         response.addHeader("Set-Cookie", cookie.toString());
                                         logger.info("JWT cookie set successfully for {}", email);
+
+                                        // Set the authentication in the SecurityContext
+                                        var userDetails = new org.springframework.security.core.userdetails.User(
+                                                        email,
+                                                        "",
+                                                        Collections.singletonList(
+                                                                        new SimpleGrantedAuthority("ROLE_USER")));
+                                        var authToken = new UsernamePasswordAuthenticationToken(
+                                                        userDetails,
+                                                        null,
+                                                        userDetails.getAuthorities());
+                                        SecurityContextHolder.getContext().setAuthentication(authToken);
+
                                         response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
                                 } else {
                                         logger.error("Email not found in OAuth2 user attributes");
