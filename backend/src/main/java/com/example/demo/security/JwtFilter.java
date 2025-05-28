@@ -29,6 +29,13 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        // Skip JWT filter for OAuth2 and login endpoints
+        String path = request.getRequestURI();
+        if (path.startsWith("/oauth2/") || path.startsWith("/login/oauth2/") || path.startsWith("/api/auth/oauth2")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
         String email = null;
         String token = null;
