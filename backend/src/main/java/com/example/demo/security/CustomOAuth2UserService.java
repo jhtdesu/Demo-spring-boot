@@ -34,40 +34,26 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         logger.info("CustomOAuth2UserService.loadUser called!");
 
-        // Delegate to the default implementation for loading the user
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oauth2User = delegate.loadUser(userRequest);
 
-        // Get user info from OAuth2 response
         Map<String, Object> attributes = oauth2User.getAttributes();
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
 
         logger.info("Processing OAuth2 user: email={}, name={}", email, name);
 
-        // Check if user exists in database
-        User user = userRepository.findByEmail(email)
+        userRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    // Create new user if doesn't exist
                     User newUser = new User();
                     newUser.setEmail(email);
                     newUser.setName(name);
                     return userRepository.save(newUser);
                 });
 
-        // Generate JWT token
-        String token = jwtUtil.generateToken(email);
-        logger.info("Generated JWT token for user: {}", email);
-
-        // Create a new map with all attributes plus the JWT token
-        Map<String, Object> newAttributes = new HashMap<>(attributes);
-        newAttributes.put("jwt_token", token);
-        newAttributes.put("user_id", user.getId());
-
         return new DefaultOAuth2User(
                 oauth2User.getAuthorities(),
-                newAttributes,
-                "email" // Use email as the name attribute key
-        );
+                attributes,
+                "email");
     }
 }
