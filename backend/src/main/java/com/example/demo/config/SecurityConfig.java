@@ -24,7 +24,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import com.example.demo.security.CustomOAuth2UserService;
-import com.example.demo.security.CustomOAuth2SuccessHandler;
 
 import java.util.List; // Import List
 
@@ -39,9 +38,6 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
 
         @Autowired
         private CustomOAuth2UserService customOAuth2UserService;
-
-        @Autowired
-        private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 
         // Defining CORS configuration as a bean is generally preferred
         // when using http.cors(Customizer.withDefaults())
@@ -88,8 +84,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .redirectionEndpoint(redirection -> redirection
                                                                 .baseUri("/oauth2/callback/*"))
                                                 .userInfoEndpoint(userInfo -> userInfo
-                                                                .userService(customOAuth2UserService))
-                                                .successHandler(customOAuth2SuccessHandler))
+                                                                .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
