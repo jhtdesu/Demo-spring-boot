@@ -28,7 +28,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List; // Import List
 
@@ -44,16 +43,10 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         private JwtFilter jwtFilter;
 
         @Autowired
-        @Qualifier("customOAuth2UserService")
         private CustomOAuth2UserService customOAuth2UserService;
 
         public SecurityConfig() {
                 logger.info("SecurityConfig initialized!");
-        }
-
-        @Bean
-        public CustomOAuth2UserService customOAuth2UserService() {
-                return new CustomOAuth2UserService();
         }
 
         // Defining CORS configuration as a bean is generally preferred
