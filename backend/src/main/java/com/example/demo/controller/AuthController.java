@@ -79,33 +79,6 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Register successful");
     }
 
-    @GetMapping("/oauth2/success")
-    public ResponseEntity<?> oauth2Success(@AuthenticationPrincipal OAuth2User oauth2User,
-            HttpServletResponse response) {
-        try {
-            String email = oauth2User.getAttribute("email");
-            User user = userService.getUserByEmail(email);
-
-            // Generate JWT token
-            String token = jwtUtil.generateToken(email);
-
-            // Set JWT as HttpOnly cookie
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(24 * 60 * 60)
-                    .sameSite("None")
-                    .build();
-            response.addHeader("Set-Cookie", cookie.toString());
-
-            return ResponseEntity.ok()
-                    .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OAuth2 authentication failed");
-        }
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         // Clear the JWT cookie
