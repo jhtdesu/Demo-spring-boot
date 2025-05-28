@@ -22,65 +22,65 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+        private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
+        @Autowired
+        private CustomOAuth2UserService customOAuth2UserService;
 
-    public SecurityConfig() {
-        logger.info("SecurityConfig initialized!");
-    }
+        public SecurityConfig() {
+                logger.info("SecurityConfig initialized!");
+        }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "https://frontend-jh-74d9be1b01e4.herokuapp.com",
-                "https://backend-jh-cff06dd28ef7.herokuapp.com"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("Set-Cookie"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        @Bean
+        CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(List.of(
+                                "https://frontend-jh-74d9be1b01e4.herokuapp.com",
+                                "https://backend-jh-cff06dd28ef7.herokuapp.com"));
+                configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(List.of("*"));
+                configuration.setExposedHeaders(List.of("Set-Cookie"));
+                configuration.setAllowCredentials(true);
+                configuration.setMaxAge(3600L);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        logger.info("Configuring SecurityFilterChain");
-        http
-                .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/static/**",
-                                "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg",
-                                "/home",
-                                "/login",
-                                "/register",
-                                "/error",
-                                "/api/auth/login",
-                                "/api/auth/register",
-                                "/oauth2/**",
-                                "/login/oauth2/**",
-                                "/api/auth/google/**")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)))
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
-                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .permitAll());
-        return http.build();
-    }
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                logger.info("Configuring SecurityFilterChain");
+                http
+                                .cors(Customizer.withDefaults())
+                                .csrf(csrf -> csrf.disable())
+                                .sessionManagement(sessionManagement -> sessionManagement
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/",
+                                                                "/index.html",
+                                                                "/static/**",
+                                                                "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg",
+                                                                "/home",
+                                                                "/login",
+                                                                "/register",
+                                                                "/error",
+                                                                "/api/auth/login",
+                                                                "/api/auth/register",
+                                                                "/oauth2/**",
+                                                                "/login/oauth2/**",
+                                                                "/api/auth/google/**")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .oauth2Login(oauth2 -> oauth2
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService)))
+                                .logout(logout -> logout
+                                                .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
+                                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+                                                .invalidateHttpSession(true)
+                                                .clearAuthentication(true)
+                                                .permitAll());
+                return http.build();
+        }
 }
