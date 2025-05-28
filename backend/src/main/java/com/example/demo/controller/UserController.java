@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import java.util.List;

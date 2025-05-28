@@ -49,7 +49,6 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(loginRequest.getEmail());
 
-            // Set JWT as HttpOnly cookie
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true)
                     .secure(true)
@@ -59,7 +58,6 @@ public class AuthController {
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
-            // Get user details
             User user = userService.getUserByEmail(loginRequest.getEmail());
 
             return ResponseEntity.ok()
@@ -71,7 +69,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        // Check if user already exists
         if (userService.getUserByEmail(user.getEmail()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
         }
@@ -86,10 +83,8 @@ public class AuthController {
             String email = oauth2User.getAttribute("email");
             User user = userService.getUserByEmail(email);
 
-            // Generate JWT token
             String token = jwtUtil.generateToken(email);
 
-            // Set JWT as HttpOnly cookie
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true)
                     .secure(true)
@@ -108,7 +103,6 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        // Clear the JWT cookie
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
                 .httpOnly(true)
                 .secure(true)

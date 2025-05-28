@@ -27,7 +27,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String name = oAuth2User.getAttribute("name");
         System.out.println("OAuth2 login: email=" + email + ", name=" + name);
 
-        // Create user if not exists
         userRepository.findByEmail(email).orElseGet(() -> {
             System.out.println("Creating new user for email: " + email);
             User newUser = new User();

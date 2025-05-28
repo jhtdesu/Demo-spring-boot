@@ -29,7 +29,6 @@ public class DemoApplication {
     public FilterRegistrationBean<JwtFilter> jwtFilterRegistrationBean() {
         FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(jwtFilter);
-        // Apply the JwtFilter ONLY to the /api/auth/** endpoints (or other JWT-protected areas)
         registrationBean.addUrlPatterns("/api/auth/**");
         return registrationBean;
     }

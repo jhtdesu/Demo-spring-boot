@@ -33,9 +33,8 @@ public class JwtFilter extends OncePerRequestFilter {
         String email = null;
         String token = null;
 
-        // 1. Lấy token từ header hoặc cookie
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7); // bỏ "Bearer "
+            token = authHeader.substring(7);
         } else if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
@@ -44,15 +43,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
         }
+
         if (token != null) {
             try {
                 email = jwtUtil.extractEmail(token);
             } catch (Exception e) {
-                logger.warn("Không thể trích xuất email từ token: " + e.getMessage());
+                logger.warn("Token email extraction failed: " + e.getMessage());
             }
         }
 
-        // 2. Nếu token hợp lệ và user chưa được xác thực
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             var userDetails = userDetailsService.loadUserByUsername(email);
 
@@ -60,13 +59,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 var authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // 3. Gán user vào context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // 4. Cho request đi tiếp
         filterChain.doFilter(request, response);
     }
 }

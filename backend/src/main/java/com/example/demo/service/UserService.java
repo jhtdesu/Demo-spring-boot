@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UserService {
@@ -33,16 +32,14 @@ public class UserService {
     }
 
     public void register(User user) {
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    userRepository.save(user);
-}
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
 
-    // New methods for profile management
     public User updateProfile(String userId, User updatedUser) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update profile fields
         existingUser.setName(updatedUser.getName());
         existingUser.setBio(updatedUser.getBio());
         existingUser.setLocation(updatedUser.getLocation());

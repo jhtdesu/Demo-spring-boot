@@ -17,7 +17,6 @@ public class User {
     private String joinDate;
 
     public User() {
-        // Empty constructor
     }
 
     public User(String id, String name, String password, String email) {
@@ -25,7 +24,7 @@ public class User {
         this.name = name;
         this.password = password;
         this.email = email;
-        this.isModerator = false; // Default to false
+        this.isModerator = false;
         this.joinDate = java.time.LocalDateTime.now().toString();
     }
 
