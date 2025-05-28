@@ -85,6 +85,7 @@ public class SecurityConfig {
                                                                 "/api/auth/register",
                                                                 "/oauth2/**",
                                                                 "/login/oauth2/**",
+                                                                "/api/auth/oauth2/success",
                                                                 "/api/auth/google/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
@@ -117,29 +118,35 @@ public class SecurityConfig {
         @Bean
         public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
                 return (request, response, authentication) -> {
-                        String email = null;
-                        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken oauthToken) {
-                                org.springframework.security.oauth2.core.user.OAuth2User oauth2User = oauthToken
-                                                .getPrincipal();
-                                email = (String) oauth2User.getAttributes().get("email");
-                                logger.info("OAuth2 login successful for email: {}", email);
-                        }
-                        if (email != null) {
-                                String jwtToken = jwtUtil.generateToken(email);
-                                ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
-                                                .httpOnly(true)
-                                                .secure(true)
-                                                .path("/")
-                                                .maxAge(24 * 60 * 60)
-                                                .sameSite("None")
-                                                .build();
-                                response.addHeader("Set-Cookie", cookie.toString());
-                                logger.info("JWT cookie set successfully for {}", email);
-                                response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
-                        } else {
-                                logger.error("Email not found in OAuth2 user attributes");
+                        try {
+                                String email = null;
+                                if (authentication
+                                                .getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                                        email = oauth2User.getAttribute("email");
+                                        logger.info("OAuth2 login successful for email: {}", email);
+                                }
+
+                                if (email != null) {
+                                        String jwtToken = jwtUtil.generateToken(email);
+                                        ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
+                                                        .httpOnly(true)
+                                                        .secure(true)
+                                                        .path("/")
+                                                        .maxAge(24 * 60 * 60)
+                                                        .sameSite("None")
+                                                        .build();
+                                        response.addHeader("Set-Cookie", cookie.toString());
+                                        logger.info("JWT cookie set successfully for {}", email);
+                                        response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                                } else {
+                                        logger.error("Email not found in OAuth2 user attributes");
+                                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                                        response.getWriter().write("{\"error\": \"Email not found\"}");
+                                }
+                        } catch (Exception e) {
+                                logger.error("Error in OAuth2 success handler", e);
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.getWriter().write("{\"error\": \"Email not found\"}");
+                                response.getWriter().write("{\"error\": \"Authentication failed\"}");
                         }
                 };
         }
