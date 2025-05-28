@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -35,31 +37,41 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         logger.info("OAuth2 user details - email: {}, name: {}, providerId: {}", email, name, providerId);
 
-        // Always create or update user with latest OAuth2 data
-        User user = userRepository.findByEmail(email)
-                .orElse(new User()); // Create new user if not exists
+        // Check if user exists
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        // Update all user fields with latest OAuth2 data
-        user.setEmail(email);
-        user.setName(name != null ? name : "No Name");
-        user.setProvider("google");
-        user.setProviderId(providerId);
-        user.setProfilePicture(picture);
-        if (user.getJoinDate() == null) {
+        if (user == null) {
+            // Create new user if not exists
+            user = new User();
+            user.setEmail(email);
+            user.setName(name != null ? name : "No Name");
+            user.setProvider("google");
+            user.setProviderId(providerId);
+            user.setProfilePicture(picture);
             user.setJoinDate(java.time.LocalDateTime.now().toString());
-        }
-        if (user.getBio() == null) {
             user.setBio("");
-        }
-        if (user.getLocation() == null) {
             user.setLocation("");
+            user.setModerator(false);
+
+            // Save the new user
+            user = userRepository.save(user);
+            logger.info("New user created via OAuth2: {}", user.getEmail());
+        } else {
+            // Update existing user's OAuth2 information
+            user.setName(name != null ? name : user.getName());
+            user.setProvider("google");
+            user.setProviderId(providerId);
+            user.setProfilePicture(picture);
+
+            // Save the updated user
+            user = userRepository.save(user);
+            logger.info("Existing user updated via OAuth2: {}", user.getEmail());
         }
-        user.setModerator(false);
 
-        // Save the updated user
-        User savedUser = userRepository.save(user);
-        logger.info("User saved/updated successfully: {}", savedUser.getEmail());
-
-        return oAuth2User;
+        // Create a new OAuth2User with the user's authorities
+        return new org.springframework.security.oauth2.core.user.DefaultOAuth2User(
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
+                oAuth2User.getAttributes(),
+                "email");
     }
 }

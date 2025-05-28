@@ -94,7 +94,17 @@ public class AuthController {
             HttpServletResponse response) {
         try {
             String email = oauth2User.getAttribute("email");
+            if (email == null) {
+                logger.error("No email found in OAuth2 user attributes");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("OAuth2 authentication failed - no email found");
+            }
+
             User user = userService.getUserByEmail(email);
+            if (user == null) {
+                logger.error("User not found after OAuth2 authentication: {}", email);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User not found");
+            }
 
             String token = jwtUtil.generateToken(email);
 
@@ -107,9 +117,11 @@ public class AuthController {
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
+            logger.info("OAuth2 user logged in successfully: {}", user.getEmail());
             return ResponseEntity.ok()
                     .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
         } catch (Exception e) {
+            logger.error("OAuth2 authentication failed", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OAuth2 authentication failed");
         }
     }
