@@ -23,7 +23,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Controller
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "https://frontend-jh-74d9be1b01e4.herokuapp.com", allowCredentials = "true")
+@CrossOrigin(origins = {
+        "https://frontend-jh-74d9be1b01e4.herokuapp.com",
+        "http://localhost:3000",
+        "http://localhost:8080"
+}, allowCredentials = "true")
 public class AuthController {
 
     @Autowired

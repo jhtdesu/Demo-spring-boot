@@ -50,6 +50,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                 "http://localhost:8080"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
+                configuration.setExposedHeaders(List.of("Set-Cookie"));
                 configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
