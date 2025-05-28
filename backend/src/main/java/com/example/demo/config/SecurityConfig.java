@@ -75,6 +75,9 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                                 "/oauth2/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
+                                .oauth2Login(oauth2 -> oauth2
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
