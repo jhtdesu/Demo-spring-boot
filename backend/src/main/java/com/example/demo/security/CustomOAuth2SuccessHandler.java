@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.Cookie;
 
 @Component
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -24,13 +25,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String token = jwtUtil.generateToken(email);
 
         // Set JWT as a cookie (accessible to JS, cross-site)
-        javax.servlet.http.Cookie jwtCookie = new javax.servlet.http.Cookie("jwt", token);
+        Cookie jwtCookie = new Cookie("jwt", token);
         jwtCookie.setPath("/");
         jwtCookie.setHttpOnly(false); // Allow JS access
         jwtCookie.setSecure(true); // Only over HTTPS
         jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
         jwtCookie.setDomain("frontend-jh-74d9be1b01e4.herokuapp.com");
-        jwtCookie.setComment("SameSite=None"); // Not a real SameSite flag, but for clarity
+        // Note: SameSite=None is not directly supported by Cookie API in Java, must be
+        // set via response header if needed
         response.addCookie(jwtCookie);
 
         // Redirect to frontend /home
