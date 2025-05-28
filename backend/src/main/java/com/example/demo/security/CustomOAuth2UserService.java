@@ -51,15 +51,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     return userRepository.save(newUser);
                 });
 
-        if (user.getProvider() == null || !user.getProvider().equals("google")) {
-            logger.info("Updating existing user with Google provider details");
-            user.setProvider("google");
-            user.setProviderId(providerId);
-            if (picture != null) {
-                user.setProfilePicture(picture);
-            }
-            userRepository.save(user);
+        // Always update the user with the latest OAuth2 data
+        user.setName(name != null ? name : user.getName());
+        user.setProvider("google");
+        user.setProviderId(providerId);
+        if (picture != null) {
+            user.setProfilePicture(picture);
         }
+        userRepository.save(user);
 
         return oAuth2User;
     }
