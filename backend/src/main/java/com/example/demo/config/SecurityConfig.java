@@ -24,8 +24,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import com.example.demo.security.CustomOAuth2UserService;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import java.util.List; // Import List
 
@@ -52,7 +50,6 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                 "http://localhost:8080"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
-                configuration.setExposedHeaders(List.of("Set-Cookie"));
                 configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -66,7 +63,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(sessionManagement -> sessionManagement
-                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/",
@@ -82,9 +79,12 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
+                                                .authorizationEndpoint(authorization -> authorization
+                                                                .baseUri("/oauth2/authorize"))
+                                                .redirectionEndpoint(redirection -> redirection
+                                                                .baseUri("/oauth2/callback/*"))
                                                 .userInfoEndpoint(userInfo -> userInfo
-                                                                .userService(customOAuth2UserService))
-                                                .successHandler(myAuthenticationSuccessHandler()))
+                                                                .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
@@ -115,12 +115,6 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
                 return authConfig.getAuthenticationManager();
-        }
-
-        @Bean
-        public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
-                // Redirect to your frontend app after successful login
-                return new SimpleUrlAuthenticationSuccessHandler("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
         }
 
         // Remove the WebMvcConfigurer implementation for CORS if using the
