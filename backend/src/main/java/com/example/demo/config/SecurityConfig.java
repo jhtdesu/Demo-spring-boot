@@ -71,7 +71,8 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                                 "/login",
                                                                 "/register",
                                                                 "/error",
-                                                                "/api/auth/**")
+                                                                "/api/auth/**",
+                                                                "/oauth2/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .logout(logout -> logout
