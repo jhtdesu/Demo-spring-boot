@@ -24,6 +24,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import com.example.demo.security.CustomOAuth2UserService;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import java.util.List; // Import List
 
@@ -81,7 +83,8 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
                                                 .userInfoEndpoint(userInfo -> userInfo
-                                                                .userService(customOAuth2UserService)))
+                                                                .userService(customOAuth2UserService))
+                                                .successHandler(myAuthenticationSuccessHandler()))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
@@ -112,6 +115,12 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
                 return authConfig.getAuthenticationManager();
+        }
+
+        @Bean
+        public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
+                // Redirect to your frontend app after successful login
+                return new SimpleUrlAuthenticationSuccessHandler("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
         }
 
         // Remove the WebMvcConfigurer implementation for CORS if using the
