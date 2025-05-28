@@ -18,11 +18,8 @@ import com.example.demo.service.BookService;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "https://frontend-jh-74d9be1b01e4.herokuapp.com", allowCredentials = "true")
 public class BookController {
 
     @Autowired
