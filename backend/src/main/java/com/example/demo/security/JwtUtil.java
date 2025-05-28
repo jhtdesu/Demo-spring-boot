@@ -3,6 +3,7 @@ package com.example.demo.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -12,9 +13,14 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final Key SECRET_KEY = Keys.hmacShaKeyFor("your-256-bit-secret-your-256-bit-secret".getBytes(StandardCharsets.UTF_8));
-    private final long EXPIRATION_TIME = 86400000; // 24 giờ (tính bằng milliseconds)
+    @Value("${jwt.secret:your-256-bit-secret-your-256-bit-secret}")
+    private String secretKey;
 
+    @Value("${jwt.expiration:86400000}")
+    private long expirationTime;
+
+    private Key getSigningKey() {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
     // Tạo JWT
     public String generateToken(String email) {
         return Jwts.builder()

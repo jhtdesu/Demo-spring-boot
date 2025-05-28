@@ -17,6 +17,9 @@ import com.example.demo.security.JwtUtil;
 import com.example.demo.model.LoginResponse;
 import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -49,10 +52,10 @@ public class AuthController {
             // Set JWT as HttpOnly cookie
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true)
-                    .secure(true) // set to true for HTTPS
+                    .secure(true)
                     .path("/")
                     .maxAge(24 * 60 * 60)
-                    .sameSite("None") // Required for cross-site cookies
+                    .sameSite("None")
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
@@ -74,5 +77,58 @@ public class AuthController {
         }
         userService.register(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("Register successful");
+    }
+
+    @GetMapping("/oauth2/success")
+    public ResponseEntity<?> oauth2Success(@AuthenticationPrincipal OAuth2User oauth2User,
+            HttpServletResponse response) {
+        try {
+            String email = oauth2User.getAttribute("email");
+            User user = userService.getUserByEmail(email);
+
+            // Generate JWT token
+            String token = jwtUtil.generateToken(email);
+
+            // Set JWT as HttpOnly cookie
+            ResponseCookie cookie = ResponseCookie.from("jwt", token)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .sameSite("None")
+                    .build();
+            response.addHeader("Set-Cookie", cookie.toString());
+
+            return ResponseEntity.ok()
+                    .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OAuth2 authentication failed");
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // Clear the JWT cookie
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        return ResponseEntity.ok().body("Logged out successfully");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            User user = userService.getUserByEmail(userDetails.getUsername());
+            return ResponseEntity.ok()
+                    .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
     }
 }

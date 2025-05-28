@@ -44,7 +44,10 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("https://frontend-jh-74d9be1b01e4.herokuapp.com"));
+                configuration.setAllowedOrigins(List.of(
+                                "https://frontend-jh-74d9be1b01e4.herokuapp.com",
+                                "http://localhost:3000",
+                                "http://localhost:8080"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
                 configuration.setAllowCredentials(true);
@@ -76,16 +79,18 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
+                                                .authorizationEndpoint(authorization -> authorization
+                                                                .baseUri("/oauth2/authorize"))
+                                                .redirectionEndpoint(redirection -> redirection
+                                                                .baseUri("/oauth2/callback/*"))
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
-                                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                                .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-                                                .logoutSuccessUrl(
-                                                                "https://frontend-jh-74d9be1b01e4.herokuapp.com/login?logout")
+                                                .deleteCookies("jwt")
                                                 .invalidateHttpSession(true)
                                                 .clearAuthentication(true)
-                                                .deleteCookies("JSESSIONID")
                                                 .permitAll());
                 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
