@@ -78,7 +78,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(sessionManagement -> sessionManagement
-                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/",
@@ -89,8 +89,10 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                                 "/login",
                                                                 "/register",
                                                                 "/error",
-                                                                "/api/auth/**",
-                                                                "/oauth2/**")
+                                                                "/api/auth/login",
+                                                                "/api/auth/register",
+                                                                "/oauth2/**",
+                                                                "/login/oauth2/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
