@@ -60,7 +60,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(sessionManagement -> sessionManagement
-                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/",
@@ -74,35 +74,16 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                                 "/api/auth/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
-                                .formLogin(form -> form
-                                                .loginPage("https://backend-jh-cff06dd28ef7.herokuapp.com/login")
-                                                .defaultSuccessUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/home",
-                                                                true)
-                                                .failureUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/login")
-                                                .permitAll())
-                                .oauth2Login(oauth2 -> oauth2
-                                                .defaultSuccessUrl("https://backend-jh-cff06dd28ef7.herokuapp.com/home",
-                                                                true)
-                                                .userInfoEndpoint(userInfo -> userInfo
-                                                                .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                                                 .logoutSuccessUrl(
-                                                                "https://backend-jh-cff06dd28ef7.herokuapp.com/login?logout")
+                                                                "https://frontend-jh-74d9be1b01e4.herokuapp.com/login?logout")
                                                 .invalidateHttpSession(true)
                                                 .clearAuthentication(true)
                                                 .deleteCookies("JSESSIONID")
                                                 .permitAll());
                 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-                // Explicitly configure session repository (though IF_REQUIRED usually handles
-                // this)
-                // You don't strictly need this if using default session management
-                // .securityContext(securityContext -> {
-                // securityContext.securityContextRepository(httpSessionSecurityContextRepository());
-                // securityContext.requireExplicitSave(false);
-                // });
 
                 return http.build();
         }
