@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.servlet.http.Cookie;
 
 @Component
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -24,20 +23,19 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .getAttribute("email");
         String token = jwtUtil.generateToken(email);
 
-        // Set JWT as a cookie (accessible to JS, cross-site)
-        Cookie jwtCookie = new Cookie("jwt", token);
+        // Set JWT as a cookie (not HttpOnly so frontend JS can access it)
+        javax.servlet.http.Cookie jwtCookie = new javax.servlet.http.Cookie("jwt", token);
         jwtCookie.setPath("/");
-        jwtCookie.setHttpOnly(false); // Allow JS access
-        jwtCookie.setSecure(true); // Only over HTTPS
         jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
-        // Do NOT set domain, let browser default to backend domain
+        jwtCookie.setSecure(true);
+        jwtCookie.setHttpOnly(false); // Allow JS access
+        jwtCookie.setDomain("frontend-jh-74d9be1b01e4.herokuapp.com");
+        jwtCookie.setComment("JWT for authentication");
+        jwtCookie.setAttribute("SameSite", "None");
         response.addCookie(jwtCookie);
-        // Manually add SameSite=None
-        response.setHeader("Set-Cookie",
-                String.format("jwt=%s; Path=/; Max-Age=%d; Secure; SameSite=None", token, 24 * 60 * 60));
 
-        // Redirect to frontend /home
-        String redirectUrl = "https://frontend-jh-74d9be1b01e4.herokuapp.com/home";
+        // Redirect to frontend /home with JWT as query param
+        String redirectUrl = "https://frontend-jh-74d9be1b01e4.herokuapp.com/home?token=" + token;
         response.sendRedirect(redirectUrl);
     }
 }
