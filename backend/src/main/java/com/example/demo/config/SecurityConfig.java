@@ -34,6 +34,9 @@ import java.util.Collections;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -75,6 +78,22 @@ public class SecurityConfig {
                 return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
         }
 
+        // Custom entry point to restrict OAuth2 login initiation to frontend
+        @Bean
+        public AuthenticationEntryPoint restrictedOAuth2EntryPoint() {
+                return (request, response, authException) -> {
+                        String referer = request.getHeader("Referer");
+                        if (referer == null || !referer.startsWith("https://frontend-jh-74d9be1b01e4.herokuapp.com")) {
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                                                "Login must be initiated from the frontend");
+                        } else {
+                                // Fallback to default behavior (redirect to login page)
+                                new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/google").commence(request,
+                                                response, authException);
+                        }
+                };
+        }
+
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 logger.info("Configuring SecurityFilterChain");
@@ -113,7 +132,10 @@ public class SecurityConfig {
                                                 .clearAuthentication(true)
                                                 .permitAll())
                                 .exceptionHandling(eh -> eh
-                                                .authenticationEntryPoint(restAuthenticationEntryPoint()));
+                                                .authenticationEntryPoint(restAuthenticationEntryPoint())
+                                                .defaultAuthenticationEntryPointFor(restrictedOAuth2EntryPoint(),
+                                                                new AntPathRequestMatcher(
+                                                                                "/oauth2/authorization/google")));
                 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
