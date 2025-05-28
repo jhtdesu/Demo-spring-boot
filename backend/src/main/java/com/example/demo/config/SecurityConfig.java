@@ -26,11 +26,6 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import com.example.demo.security.CustomOAuth2UserService;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.http.ResponseCookie;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List; // Import List
 
@@ -40,17 +35,11 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                               // CorsConfigurationSource bean is often preferred when using
                               // http.cors(Customizer.withDefaults())
 
-        private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
         @Autowired
         private JwtFilter jwtFilter;
 
         @Autowired
         private CustomOAuth2UserService customOAuth2UserService;
-
-        public SecurityConfig() {
-                logger.info("SecurityConfig initialized!");
-        }
 
         // Defining CORS configuration as a bean is generally preferred
         // when using http.cors(Customizer.withDefaults())
@@ -73,12 +62,11 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                logger.info("Configuring SecurityFilterChain. customOAuth2UserService: {}", customOAuth2UserService);
                 http
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
                                 .sessionManagement(sessionManagement -> sessionManagement
-                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
                                                                 "/",
@@ -89,10 +77,8 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                                 "/login",
                                                                 "/register",
                                                                 "/error",
-                                                                "/api/auth/login",
-                                                                "/api/auth/register",
-                                                                "/oauth2/**",
-                                                                "/login/oauth2/**")
+                                                                "/api/auth/**",
+                                                                "/oauth2/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
@@ -133,37 +119,8 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
 
         @Bean
         public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
-                return (request, response, authentication) -> {
-                        String jwtToken = null;
-                        String email = null;
-                        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken oauthToken) {
-                                org.springframework.security.oauth2.core.user.OAuth2User oauth2User = oauthToken
-                                                .getPrincipal();
-                                jwtToken = (String) oauth2User.getAttributes().get("jwt_token");
-                                email = (String) oauth2User.getAttributes().get("email");
-                        }
-                        logger.info("Authentication success handler called. JWT token present: {}", jwtToken != null);
-                        if (jwtToken != null) {
-                                ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
-                                                .httpOnly(true)
-                                                .secure(true)
-                                                .path("/")
-                                                .maxAge(24 * 60 * 60)
-                                                .sameSite("None")
-                                                .build();
-                                response.addHeader("Set-Cookie", cookie.toString());
-                                logger.info("JWT cookie set successfully");
-                                response.setContentType("application/json");
-                                response.getWriter().write(
-                                                "{\"token\": \"" + jwtToken + "\", \"user\": \"" + email + "\"}");
-                        } else {
-                                logger.error("JWT token not found in OAuth2 user attributes");
-                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.getWriter().write("{\"error\": \"JWT token not found\"}");
-                                return;
-                        }
-                        response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
-                };
+                // Redirect to your frontend app after successful login
+                return new SimpleUrlAuthenticationSuccessHandler("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
         }
 
         // Remove the WebMvcConfigurer implementation for CORS if using the
