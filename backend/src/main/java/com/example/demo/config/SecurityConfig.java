@@ -31,6 +31,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import java.util.Collections;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.http.HttpStatus;
 
 @Configuration
 @EnableWebSecurity
@@ -65,6 +68,11 @@ public class SecurityConfig {
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/**", configuration);
                 return source;
+        }
+
+        @Bean
+        public AuthenticationEntryPoint restAuthenticationEntryPoint() {
+                return new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED);
         }
 
         @Bean
@@ -103,7 +111,9 @@ public class SecurityConfig {
                                                 .deleteCookies("jwt")
                                                 .invalidateHttpSession(true)
                                                 .clearAuthentication(true)
-                                                .permitAll());
+                                                .permitAll())
+                                .exceptionHandling(eh -> eh
+                                                .authenticationEntryPoint(restAuthenticationEntryPoint()));
                 http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
