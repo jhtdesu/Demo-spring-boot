@@ -8,6 +8,7 @@ import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.example.demo.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,6 +16,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -74,20 +78,17 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal Object principal) {
-        String email = null;
-        if (principal == null) {
-            return ResponseEntity.status(401).build();
-        }
-        if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
-            email = userDetails.getUsername();
-        } else if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-            email = (String) oauth2User.getAttribute("email");
-        }
-        if (email == null) {
-            return ResponseEntity.status(401).build();
-        }
+    public ResponseEntity<User> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        String email = jwtUtil.extractEmail(token);
         User user = userService.getUserByEmail(email);
+        if (user == null) {
+            // Auto-register default user
+            user = new User();
+            user.setEmail(email);
+            user.setName("Google User");
+            userService.addUser(user);
+        }
         return ResponseEntity.ok(user);
     }
 }

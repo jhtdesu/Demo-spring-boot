@@ -143,16 +143,9 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                         }
                         if (email != null) {
                                 String jwtToken = jwtUtil.generateToken(email);
-                                ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
-                                                .httpOnly(true)
-                                                .secure(true)
-                                                .path("/")
-                                                .maxAge(24 * 60 * 60)
-                                                .sameSite("None")
-                                                .build();
-                                response.addHeader("Set-Cookie", cookie.toString());
-                                logger.info("JWT cookie set successfully for {}", email);
-                                response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                                response.sendRedirect(
+                                                "https://frontend-jh-74d9be1b01e4.herokuapp.com/oauth2/callback?token="
+                                                                + jwtToken);
                         } else {
                                 logger.error("Email not found in OAuth2 user attributes");
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
