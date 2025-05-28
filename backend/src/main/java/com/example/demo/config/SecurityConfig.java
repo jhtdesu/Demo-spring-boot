@@ -80,10 +80,6 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
-                                                .authorizationEndpoint(authorization -> authorization
-                                                                .baseUri("/oauth2/authorize"))
-                                                .redirectionEndpoint(redirection -> redirection
-                                                                .baseUri("/oauth2/callback/*"))
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userService(customOAuth2UserService)))
                                 .logout(logout -> logout
