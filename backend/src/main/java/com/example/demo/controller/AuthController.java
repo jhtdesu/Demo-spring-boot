@@ -59,6 +59,7 @@ public class AuthController {
                     .path("/")
                     .maxAge(24 * 60 * 60)
                     .sameSite("None")
+                    .domain("backend-jh-cff06dd28ef7.herokuapp.com")
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
@@ -114,6 +115,7 @@ public class AuthController {
                     .path("/")
                     .maxAge(24 * 60 * 60)
                     .sameSite("None")
+                    .domain("backend-jh-cff06dd28ef7.herokuapp.com")
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
