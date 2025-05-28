@@ -48,6 +48,18 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    public User updateProfileByEmail(String email, User updatedUser) {
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setName(updatedUser.getName());
+        existingUser.setBio(updatedUser.getBio());
+        existingUser.setLocation(updatedUser.getLocation());
+        existingUser.setProfilePicture(updatedUser.getProfilePicture());
+
+        return userRepository.save(existingUser);
+    }
+
     public User setModeratorStatus(String userId, boolean isModerator) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

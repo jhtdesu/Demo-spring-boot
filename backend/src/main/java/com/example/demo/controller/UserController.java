@@ -34,6 +34,19 @@ public class UserController {
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         try {
             User user = userService.getUserByEmail(email);
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/email/{email}/profile")
+    public ResponseEntity<User> updateProfileByEmail(@PathVariable String email, @RequestBody User updatedUser) {
+        try {
+            User user = userService.updateProfileByEmail(email, updatedUser);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
