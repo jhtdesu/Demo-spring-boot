@@ -24,7 +24,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String token = jwtUtil.generateToken(email);
 
         // Set JWT as a cookie (not HttpOnly so frontend JS can access it)
-        javax.servlet.http.Cookie jwtCookie = new javax.servlet.http.Cookie("jwt", token);
+        jakarta.servlet.http.Cookie jwtCookie = new jakarta.servlet.http.Cookie("jwt", token);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
         jwtCookie.setSecure(true);
