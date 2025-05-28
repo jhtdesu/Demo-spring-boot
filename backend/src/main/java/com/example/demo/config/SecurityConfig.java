@@ -24,6 +24,14 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import com.example.demo.security.CustomOAuth2UserService;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.ResponseCookie;
+import jakarta.servlet.http.HttpServletResponse;
+import com.example.demo.security.JwtUtil;
 
 import java.util.List; // Import List
 
@@ -33,23 +41,30 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                               // CorsConfigurationSource bean is often preferred when using
                               // http.cors(Customizer.withDefaults())
 
+        private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
         @Autowired
         private JwtFilter jwtFilter;
 
         @Autowired
         private CustomOAuth2UserService customOAuth2UserService;
 
+        @Autowired
+        private JwtUtil jwtUtil;
+
+        public SecurityConfig() {
+                logger.info("SecurityConfig initialized!");
+        }
+
         // Defining CORS configuration as a bean is generally preferred
         // when using http.cors(Customizer.withDefaults())
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of(
-                                "https://frontend-jh-74d9be1b01e4.herokuapp.com",
-                                "http://localhost:3000",
-                                "http://localhost:8080"));
+                configuration.setAllowedOrigins(List.of("https://frontend-jh-74d9be1b01e4.herokuapp.com"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
+                configuration.setExposedHeaders(List.of("Set-Cookie"));
                 configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -59,6 +74,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                logger.info("Configuring SecurityFilterChain. customOAuth2UserService: {}", customOAuth2UserService);
                 http
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
@@ -74,17 +90,16 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                                 "/login",
                                                                 "/register",
                                                                 "/error",
-                                                                "/api/auth/**",
-                                                                "/oauth2/**")
+                                                                "/api/auth/login",
+                                                                "/api/auth/register",
+                                                                "/oauth2/**",
+                                                                "/login/oauth2/**")
                                                 .permitAll()
                                                 .anyRequest().authenticated())
                                 .oauth2Login(oauth2 -> oauth2
-                                                .authorizationEndpoint(authorization -> authorization
-                                                                .baseUri("/oauth2/authorize"))
-                                                .redirectionEndpoint(redirection -> redirection
-                                                                .baseUri("/oauth2/callback/*"))
                                                 .userInfoEndpoint(userInfo -> userInfo
-                                                                .userService(customOAuth2UserService)))
+                                                                .userService(customOAuth2UserService))
+                                                .successHandler(myAuthenticationSuccessHandler()))
                                 .logout(logout -> logout
                                                 .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                                                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
@@ -115,6 +130,35 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
                 return authConfig.getAuthenticationManager();
+        }
+
+        @Bean
+        public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
+                return (request, response, authentication) -> {
+                        String email = null;
+                        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken oauthToken) {
+                                org.springframework.security.oauth2.core.user.OAuth2User oauth2User = oauthToken
+                                                .getPrincipal();
+                                email = (String) oauth2User.getAttributes().get("email");
+                        }
+                        if (email != null) {
+                                String jwtToken = jwtUtil.generateToken(email);
+                                ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
+                                                .httpOnly(true)
+                                                .secure(true)
+                                                .path("/")
+                                                .maxAge(24 * 60 * 60)
+                                                .sameSite("None")
+                                                .build();
+                                response.addHeader("Set-Cookie", cookie.toString());
+                                logger.info("JWT cookie set successfully for {}", email);
+                                response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                        } else {
+                                logger.error("Email not found in OAuth2 user attributes");
+                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                                response.getWriter().write("{\"error\": \"Email not found\"}");
+                        }
+                };
         }
 
         // Remove the WebMvcConfigurer implementation for CORS if using the
