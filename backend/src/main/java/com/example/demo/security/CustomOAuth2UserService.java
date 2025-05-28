@@ -25,7 +25,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
-        logger.info("CustomOAuth2UserService.loadUser called");
+        logger.info("TEST: CustomOAuth2UserService.loadUser called!");
+        throw new RuntimeException("TEST: CustomOAuth2UserService.loadUser called!");
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
