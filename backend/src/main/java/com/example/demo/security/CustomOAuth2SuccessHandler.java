@@ -23,8 +23,18 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 .getAttribute("email");
         String token = jwtUtil.generateToken(email);
 
-        // Redirect to frontend with JWT as a query parameter
-        String redirectUrl = "https://frontend-jh-74d9be1b01e4.herokuapp.com/oauth2/redirect?token=" + token;
+        // Set JWT as a cookie (accessible to JS, cross-site)
+        javax.servlet.http.Cookie jwtCookie = new javax.servlet.http.Cookie("jwt", token);
+        jwtCookie.setPath("/");
+        jwtCookie.setHttpOnly(false); // Allow JS access
+        jwtCookie.setSecure(true); // Only over HTTPS
+        jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
+        jwtCookie.setDomain("frontend-jh-74d9be1b01e4.herokuapp.com");
+        jwtCookie.setComment("SameSite=None"); // Not a real SameSite flag, but for clarity
+        response.addCookie(jwtCookie);
+
+        // Redirect to frontend /home
+        String redirectUrl = "https://frontend-jh-74d9be1b01e4.herokuapp.com/home";
         response.sendRedirect(redirectUrl);
     }
 }
