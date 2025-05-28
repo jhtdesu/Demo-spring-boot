@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletResponse;
-import com.example.demo.security.JwtUtil;
 
 import java.util.List; // Import List
 
@@ -49,9 +48,6 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Autowired
         private CustomOAuth2UserService customOAuth2UserService;
 
-        @Autowired
-        private JwtUtil jwtUtil;
-
         public SecurityConfig() {
                 logger.info("SecurityConfig initialized!");
         }
@@ -61,7 +57,10 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("https://frontend-jh-74d9be1b01e4.herokuapp.com"));
+                configuration.setAllowedOrigins(List.of(
+                                "https://frontend-jh-74d9be1b01e4.herokuapp.com",
+                                "http://localhost:3000",
+                                "http://localhost:8080"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
                 configuration.setExposedHeaders(List.of("Set-Cookie"));
@@ -135,14 +134,16 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
                 return (request, response, authentication) -> {
+                        String jwtToken = null;
                         String email = null;
                         if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken oauthToken) {
                                 org.springframework.security.oauth2.core.user.OAuth2User oauth2User = oauthToken
                                                 .getPrincipal();
+                                jwtToken = (String) oauth2User.getAttributes().get("jwt_token");
                                 email = (String) oauth2User.getAttributes().get("email");
                         }
-                        if (email != null) {
-                                String jwtToken = jwtUtil.generateToken(email);
+                        logger.info("Authentication success handler called. JWT token present: {}", jwtToken != null);
+                        if (jwtToken != null) {
                                 ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
                                                 .httpOnly(true)
                                                 .secure(true)
@@ -151,13 +152,17 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                                                 .sameSite("None")
                                                 .build();
                                 response.addHeader("Set-Cookie", cookie.toString());
-                                logger.info("JWT cookie set successfully for {}", email);
-                                response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                                logger.info("JWT cookie set successfully");
+                                response.setContentType("application/json");
+                                response.getWriter().write(
+                                                "{\"token\": \"" + jwtToken + "\", \"user\": \"" + email + "\"}");
                         } else {
-                                logger.error("Email not found in OAuth2 user attributes");
+                                logger.error("JWT token not found in OAuth2 user attributes");
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.getWriter().write("{\"error\": \"Email not found\"}");
+                                response.getWriter().write("{\"error\": \"JWT token not found\"}");
+                                return;
                         }
+                        response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
                 };
         }
 
