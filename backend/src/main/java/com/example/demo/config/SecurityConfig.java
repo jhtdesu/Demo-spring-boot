@@ -44,7 +44,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(List.of("https://backend-jh-cff06dd28ef7.herokuapp.com"));
+                configuration.setAllowedOrigins(List.of("https://frontend-jh-74d9be1b01e4.herokuapp.com"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(List.of("*"));
                 configuration.setAllowCredentials(true);

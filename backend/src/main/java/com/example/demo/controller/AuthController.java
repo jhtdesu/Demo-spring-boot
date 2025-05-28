@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "https://frontend-jh-74d9be1b01e4.herokuapp.com", allowCredentials = "true")
 public class AuthController {
 
     @Autowired
@@ -48,14 +49,18 @@ public class AuthController {
             // Set JWT as HttpOnly cookie
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .httpOnly(true)
-                    .secure(false) // set to true in production (HTTPS)
+                    .secure(true) // set to true for HTTPS
                     .path("/")
                     .maxAge(24 * 60 * 60)
-                    .sameSite("Lax")
+                    .sameSite("None") // Required for cross-site cookies
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
-            return ResponseEntity.ok("Login successful");
+            // Get user details
+            User user = userService.getUserByEmail(loginRequest.getEmail());
+
+            return ResponseEntity.ok()
+                    .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

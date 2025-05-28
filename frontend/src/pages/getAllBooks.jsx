@@ -14,7 +14,7 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/getAllBooks', { withCredentials: true });
+        const response = await axios.get('https://backend-jh-cff06dd28ef7.herokuapp.com/getAllBooks', { withCredentials: true });
         if (Array.isArray(response.data)) {
           setBooks(response.data);
           console.log('Books:', response.data);

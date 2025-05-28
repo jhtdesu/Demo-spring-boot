@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "https://backend-jh-cff06dd28ef7.herokuapp.com", allowCredentials = "true")
+@CrossOrigin(origins = "https://frontend-jh-74d9be1b01e4.herokuapp.com", allowCredentials = "true")
 public class BookController {
 
     @Autowired

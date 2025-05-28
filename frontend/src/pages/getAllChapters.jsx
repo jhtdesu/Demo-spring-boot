@@ -9,7 +9,7 @@ const ChapterList = () => {
     useEffect(() => {
         const fetchChapters = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/getAllChapters', { withCredentials: true });
+                const response = await axios.get('https://backend-jh-cff06dd28ef7.herokuapp.com/getAllChapters', { withCredentials: true });
                 if (Array.isArray(response.data)) {
                     setChapters(response.data);
                     console.log('Chapters:', response.data);

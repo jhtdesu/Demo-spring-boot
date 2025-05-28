@@ -29,7 +29,7 @@ const GetChapterById = () => {
             try {
                 // --- Use the chapterIdFromUrl obtained from useParams ---
                 console.log(`Fetching chapter with ID from URL: ${chapterIdFromUrl}`);
-                const response = await axios.get(`http://localhost:8080/getChapter/${chapterIdFromUrl}`, { withCredentials: true });
+                const response = await axios.get(`https://backend-jh-cff06dd28ef7.herokuapp.com/getChapter/${chapterIdFromUrl}`, { withCredentials: true });
 
                 // --- Handle the response ---
                 if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
