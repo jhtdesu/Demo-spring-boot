@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import com.example.demo.security.CustomOAuth2UserService;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List; // Import List
 
@@ -35,11 +37,17 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
                               // CorsConfigurationSource bean is often preferred when using
                               // http.cors(Customizer.withDefaults())
 
+        private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
         @Autowired
         private JwtFilter jwtFilter;
 
         @Autowired
         private CustomOAuth2UserService customOAuth2UserService;
+
+        public SecurityConfig() {
+                logger.info("SecurityConfig initialized!");
+        }
 
         // Defining CORS configuration as a bean is generally preferred
         // when using http.cors(Customizer.withDefaults())
@@ -62,6 +70,7 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                logger.info("Configuring SecurityFilterChain. customOAuth2UserService: {}", customOAuth2UserService);
                 http
                                 .cors(Customizer.withDefaults())
                                 .csrf(csrf -> csrf.disable())
