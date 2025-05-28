@@ -27,43 +27,5 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         logger.info("TEST: CustomOAuth2UserService.loadUser called!");
         throw new RuntimeException("TEST: CustomOAuth2UserService.loadUser called!");
-        OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        logger.info("OAuth2 login attempt - email: {}, name: {}", email, name);
-
-        try {
-            // Check if user exists
-            User user = userRepository.findByEmail(email).orElse(null);
-            logger.info("Existing user check - found: {}", user != null);
-
-            // If user doesn't exist, create a new one
-            if (user == null) {
-                logger.info("Creating new user for email: {}", email);
-                user = new User();
-                user.setEmail(email);
-                user.setName(name != null ? name : "No Name");
-                user.setModerator(false);
-                user.setProfilePicture(null);
-                user.setBio("");
-                user.setLocation("");
-                user.setJoinDate(java.time.LocalDateTime.now().toString());
-
-                try {
-                    user = userRepository.save(user);
-                    logger.info("New user created successfully with ID: {}", user.getId());
-                } catch (Exception e) {
-                    logger.error("Error saving new user to database: {}", e.getMessage(), e);
-                    throw e;
-                }
-            } else {
-                logger.info("Existing user found with ID: {}", user.getId());
-            }
-
-            return oAuth2User;
-        } catch (Exception e) {
-            logger.error("Error in OAuth2 user processing: {}", e.getMessage(), e);
-            throw e;
-        }
     }
 }
