@@ -28,6 +28,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.ResponseCookie;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.List; // Import List
 
@@ -128,8 +131,25 @@ public class SecurityConfig { // Note: Implementing WebMvcConfigurer for CORS he
 
         @Bean
         public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
-                // Redirect to your frontend app after successful login
-                return new SimpleUrlAuthenticationSuccessHandler("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                return (request, response, authentication) -> {
+                        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+                        String jwtToken = (String) oauth2User.getAttribute("jwt_token");
+
+                        if (jwtToken != null) {
+                                // Set JWT as HttpOnly cookie
+                                ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
+                                                .httpOnly(true)
+                                                .secure(true)
+                                                .path("/")
+                                                .maxAge(24 * 60 * 60)
+                                                .sameSite("None")
+                                                .build();
+                                response.addHeader("Set-Cookie", cookie.toString());
+                        }
+
+                        // Redirect to frontend
+                        response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                };
         }
 
         // Remove the WebMvcConfigurer implementation for CORS if using the
