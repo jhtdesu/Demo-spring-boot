@@ -30,10 +30,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         jwtCookie.setHttpOnly(false); // Allow JS access
         jwtCookie.setSecure(true); // Only over HTTPS
         jwtCookie.setMaxAge(24 * 60 * 60); // 1 day
-        jwtCookie.setDomain("frontend-jh-74d9be1b01e4.herokuapp.com");
-        // Note: SameSite=None is not directly supported by Cookie API in Java, must be
-        // set via response header if needed
+        // Do NOT set domain, let browser default to backend domain
         response.addCookie(jwtCookie);
+        // Manually add SameSite=None
+        response.setHeader("Set-Cookie",
+                String.format("jwt=%s; Path=/; Max-Age=%d; Secure; SameSite=None", token, 24 * 60 * 60));
 
         // Redirect to frontend /home
         String redirectUrl = "https://frontend-jh-74d9be1b01e4.herokuapp.com/home";
