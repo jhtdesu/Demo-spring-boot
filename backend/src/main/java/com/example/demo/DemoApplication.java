@@ -29,7 +29,7 @@ public class DemoApplication {
     public FilterRegistrationBean<JwtFilter> jwtFilterRegistrationBean() {
         FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(jwtFilter);
-        registrationBean.addUrlPatterns("/api/auth/**");
+        registrationBean.addUrlPatterns("/api/*");
         return registrationBean;
     }
 
