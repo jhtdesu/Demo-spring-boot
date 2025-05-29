@@ -1,11 +1,37 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.BlogPost;
+import com.example.demo.model.User;
 import com.example.demo.service.BlogPostService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+class BlogPostWithProfileDTO {
+    public String id;
+    public String title;
+    public String content;
+    public String author;
+    public String authorProfilePicture;
+    public java.time.LocalDateTime createdAt;
+    public java.time.LocalDateTime updatedAt;
+    public String[] tags;
+    public boolean published;
+
+    public BlogPostWithProfileDTO(BlogPost post, String profilePicture) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.author = post.getAuthor();
+        this.authorProfilePicture = profilePicture;
+        this.createdAt = post.getCreatedAt();
+        this.updatedAt = post.getUpdatedAt();
+        this.tags = post.getTags();
+        this.published = post.isPublished();
+    }
+}
 
 @RestController
 @RequestMapping("/api/blog")
@@ -14,32 +40,54 @@ public class BlogPostController {
 
     @Autowired
     private BlogPostService blogPostService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping
-    public List<BlogPost> getAllPosts() {
-        return blogPostService.getAllPosts();
+    public List<BlogPostWithProfileDTO> getAllPosts() {
+        List<BlogPost> posts = blogPostService.getAllPosts();
+        return posts.stream().map(post -> {
+            User user = userService.getUserByEmail(post.getAuthor());
+            return new BlogPostWithProfileDTO(post, user != null ? user.getProfilePicture() : null);
+        }).toList();
     }
 
     @GetMapping("/published")
-    public List<BlogPost> getPublishedPosts() {
-        return blogPostService.getPublishedPosts();
+    public List<BlogPostWithProfileDTO> getPublishedPosts() {
+        List<BlogPost> posts = blogPostService.getPublishedPosts();
+        return posts.stream().map(post -> {
+            User user = userService.getUserByEmail(post.getAuthor());
+            return new BlogPostWithProfileDTO(post, user != null ? user.getProfilePicture() : null);
+        }).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BlogPost> getPostById(@PathVariable String id) {
+    public ResponseEntity<BlogPostWithProfileDTO> getPostById(@PathVariable String id) {
         return blogPostService.getPostById(id)
-                .map(ResponseEntity::ok)
+                .map(post -> {
+                    User user = userService.getUserByEmail(post.getAuthor());
+                    return ResponseEntity
+                            .ok(new BlogPostWithProfileDTO(post, user != null ? user.getProfilePicture() : null));
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/author/{author}")
-    public List<BlogPost> getPostsByAuthor(@PathVariable String author) {
-        return blogPostService.getPostsByAuthor(author);
+    public List<BlogPostWithProfileDTO> getPostsByAuthor(@PathVariable String author) {
+        List<BlogPost> posts = blogPostService.getPostsByAuthor(author);
+        return posts.stream().map(post -> {
+            User user = userService.getUserByEmail(post.getAuthor());
+            return new BlogPostWithProfileDTO(post, user != null ? user.getProfilePicture() : null);
+        }).toList();
     }
 
     @GetMapping("/tag/{tag}")
-    public List<BlogPost> getPostsByTag(@PathVariable String tag) {
-        return blogPostService.getPostsByTag(tag);
+    public List<BlogPostWithProfileDTO> getPostsByTag(@PathVariable String tag) {
+        List<BlogPost> posts = blogPostService.getPostsByTag(tag);
+        return posts.stream().map(post -> {
+            User user = userService.getUserByEmail(post.getAuthor());
+            return new BlogPostWithProfileDTO(post, user != null ? user.getProfilePicture() : null);
+        }).toList();
     }
 
     @PostMapping

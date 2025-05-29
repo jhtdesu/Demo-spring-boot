@@ -1,10 +1,30 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Comment;
+import com.example.demo.model.User;
 import com.example.demo.repository.CommentRepository;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+class CommentWithProfileDTO {
+    public String id;
+    public String blogPostId;
+    public String author;
+    public String authorProfilePicture;
+    public String content;
+    public java.time.LocalDateTime createdAt;
+
+    public CommentWithProfileDTO(Comment comment, String profilePicture) {
+        this.id = comment.getId();
+        this.blogPostId = comment.getBlogPostId();
+        this.author = comment.getAuthor();
+        this.authorProfilePicture = profilePicture;
+        this.content = comment.getContent();
+        this.createdAt = comment.getCreatedAt();
+    }
+}
 
 @RestController
 @RequestMapping("/api/comments")
@@ -13,10 +33,16 @@ public class CommentController {
 
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/post/{blogPostId}")
-    public List<Comment> getCommentsByBlogPost(@PathVariable String blogPostId) {
-        return commentRepository.findByBlogPostId(blogPostId);
+    public List<CommentWithProfileDTO> getCommentsByBlogPost(@PathVariable String blogPostId) {
+        List<Comment> comments = commentRepository.findByBlogPostId(blogPostId);
+        return comments.stream().map(comment -> {
+            User user = userService.getUserByEmail(comment.getAuthor());
+            return new CommentWithProfileDTO(comment, user != null ? user.getProfilePicture() : null);
+        }).toList();
     }
 
     @PostMapping
