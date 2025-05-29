@@ -64,8 +64,21 @@ public class SecurityConfig {
                                 "https://frontend-jh-74d9be1b01e4.herokuapp.com",
                                 "https://backend-jh-cff06dd28ef7.herokuapp.com"));
                 configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                configuration.setAllowedHeaders(List.of("*"));
-                configuration.setExposedHeaders(List.of("Set-Cookie"));
+                configuration.setAllowedHeaders(List.of(
+                                "Authorization",
+                                "Content-Type",
+                                "X-Requested-With",
+                                "Accept",
+                                "Origin",
+                                "Access-Control-Request-Method",
+                                "Access-Control-Request-Headers",
+                                "Cookie",
+                                "Set-Cookie"));
+                configuration.setExposedHeaders(List.of(
+                                "Set-Cookie",
+                                "Authorization",
+                                "Access-Control-Allow-Origin",
+                                "Access-Control-Allow-Credentials"));
                 configuration.setAllowCredentials(true);
                 configuration.setMaxAge(3600L);
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -160,17 +173,23 @@ public class SecurityConfig {
                                                 .getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
                                         email = oauth2User.getAttribute("email");
                                         logger.info("OAuth2 login successful for email: {}", email);
+                                        logger.debug("OAuth2 user attributes: {}", oauth2User.getAttributes());
                                 }
 
                                 if (email != null) {
                                         String jwtToken = jwtUtil.generateToken(email);
+                                        logger.debug("Generated JWT token: {}", jwtToken);
+
                                         ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
                                                         .httpOnly(true)
                                                         .secure(true)
                                                         .path("/")
                                                         .maxAge(24 * 60 * 60)
                                                         .sameSite("None")
+                                                        .domain("frontend-jh-74d9be1b01e4.herokuapp.com")
                                                         .build();
+
+                                        logger.debug("Setting cookie: {}", cookie.toString());
                                         response.addHeader("Set-Cookie", cookie.toString());
                                         logger.info("JWT cookie set successfully for {}", email);
 
@@ -186,6 +205,9 @@ public class SecurityConfig {
                                                         userDetails.getAuthorities());
                                         SecurityContextHolder.getContext().setAuthentication(authToken);
 
+                                        // Add a small delay to ensure cookie is set
+                                        Thread.sleep(100);
+
                                         response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
                                 } else {
                                         logger.error("Email not found in OAuth2 user attributes");
@@ -195,7 +217,8 @@ public class SecurityConfig {
                         } catch (Exception e) {
                                 logger.error("Error in OAuth2 success handler", e);
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.getWriter().write("{\"error\": \"Authentication failed\"}");
+                                response.getWriter().write(
+                                                "{\"error\": \"Authentication failed: " + e.getMessage() + "\"}");
                         }
                 };
         }
