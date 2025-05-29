@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import com.example.demo.model.Book;
+import java.time.LocalDateTime;
 
 @Document
 public class Chapter {
@@ -14,17 +15,19 @@ public class Chapter {
     private String content;
     @DBRef
     private Book book;
+    private LocalDateTime createdAt;
 
     // Existing constructor that takes three Strings
     public Chapter(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.createdAt = LocalDateTime.now();
     }
 
     // Add this no-argument constructor
     public Chapter() {
-        // You can optionally initialize fields with default values here if needed
+        this.createdAt = LocalDateTime.now();
     }
 
     public String getId() {
@@ -57,5 +60,13 @@ public class Chapter {
 
     public void setBook(Book book) {
         this.book = book;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -9,4 +9,6 @@ import java.util.List;
 public interface ChapterRepository extends MongoRepository<Chapter, String> {
     // Add custom query methods if needed
     List<Chapter> findByBookId(String bookId);
+
+    List<Chapter> findByBookIdOrderByCreatedAtDesc(String bookId);
 }

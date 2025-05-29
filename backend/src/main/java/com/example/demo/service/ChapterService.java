@@ -37,6 +37,6 @@ public class ChapterService {
     }
 
     public List<Chapter> getChaptersByBookId(String bookId) {
-        return chapterRepository.findByBookId(bookId);
+        return chapterRepository.findByBookIdOrderByCreatedAtDesc(bookId);
     }
 }
