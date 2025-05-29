@@ -179,35 +179,10 @@ public class SecurityConfig {
                                 if (email != null) {
                                         String jwtToken = jwtUtil.generateToken(email);
                                         logger.debug("Generated JWT token: {}", jwtToken);
-
-                                        ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
-                                                        .httpOnly(true)
-                                                        .secure(true)
-                                                        .path("/")
-                                                        .maxAge(24 * 60 * 60)
-                                                        .sameSite("None")
-                                                        .build();
-
-                                        logger.debug("Setting cookie: {}", cookie.toString());
-                                        response.addHeader("Set-Cookie", cookie.toString());
-                                        logger.info("JWT cookie set successfully for {}", email);
-
-                                        // Set the authentication in the SecurityContext
-                                        var userDetails = new org.springframework.security.core.userdetails.User(
-                                                        email,
-                                                        "",
-                                                        Collections.singletonList(
-                                                                        new SimpleGrantedAuthority("ROLE_USER")));
-                                        var authToken = new UsernamePasswordAuthenticationToken(
-                                                        userDetails,
-                                                        null,
-                                                        userDetails.getAuthorities());
-                                        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                                        // Add a small delay to ensure cookie is set
-                                        Thread.sleep(100);
-
-                                        response.sendRedirect("https://frontend-jh-74d9be1b01e4.herokuapp.com/");
+                                        // Redirect to frontend with token as query param
+                                        String redirectUrl = "https://frontend-jh-74d9be1b01e4.herokuapp.com/oauth2/success?token="
+                                                        + jwtToken;
+                                        response.sendRedirect(redirectUrl);
                                 } else {
                                         logger.error("Email not found in OAuth2 user attributes");
                                         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
