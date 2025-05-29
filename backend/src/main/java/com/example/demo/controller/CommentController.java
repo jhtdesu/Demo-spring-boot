@@ -48,6 +48,13 @@ public class CommentController {
     @PostMapping
     public Comment addComment(@RequestBody Comment comment) {
         comment.setCreatedAt(java.time.LocalDateTime.now());
+        // If no profile picture is provided, try to get it from the user
+        if (comment.getAuthorProfilePicture() == null) {
+            User user = userService.getUserByEmail(comment.getAuthor());
+            if (user != null) {
+                comment.setAuthorProfilePicture(user.getProfilePicture());
+            }
+        }
         return commentRepository.save(comment);
     }
 }

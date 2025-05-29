@@ -12,6 +12,7 @@ public class Comment {
     private String author;
     private String content;
     private LocalDateTime createdAt;
+    private String authorProfilePicture;
 
     public Comment() {
     }
@@ -61,5 +62,13 @@ public class Comment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getAuthorProfilePicture() {
+        return authorProfilePicture;
+    }
+
+    public void setAuthorProfilePicture(String authorProfilePicture) {
+        this.authorProfilePicture = authorProfilePicture;
     }
 }
