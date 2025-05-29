@@ -21,4 +21,13 @@ public class BlogPost {
     private LocalDateTime updatedAt;
     private String[] tags;
     private boolean published;
+    private String authorName;
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
 }

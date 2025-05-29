@@ -14,6 +14,7 @@ class BlogPostWithProfileDTO {
     public String title;
     public String content;
     public String author;
+    public String authorName;
     public String authorProfilePicture;
     public java.time.LocalDateTime createdAt;
     public java.time.LocalDateTime updatedAt;
@@ -25,6 +26,7 @@ class BlogPostWithProfileDTO {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.author = post.getAuthor();
+        this.authorName = post.getAuthorName();
         this.authorProfilePicture = profilePicture;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
