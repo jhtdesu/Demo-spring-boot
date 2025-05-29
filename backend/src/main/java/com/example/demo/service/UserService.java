@@ -34,6 +34,11 @@ public class UserService {
     public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setJoinDate(java.time.LocalDateTime.now().toString());
+        // Set default profile picture for form registration
+        if (user.getProfilePicture() == null || user.getProfilePicture().isEmpty()) {
+            user.setProfilePicture(
+                    "https://unblast.com/wp-content/uploads/2020/06/Landscape-Softcover-Book-Mockup-2.jpg");
+        }
         userRepository.save(user);
     }
 
