@@ -37,7 +37,7 @@ public class UserService {
         // Set default profile picture for form registration
         if (user.getProfilePicture() == null || user.getProfilePicture().isEmpty()) {
             user.setProfilePicture(
-                    "https://unblast.com/wp-content/uploads/2020/06/Landscape-Softcover-Book-Mockup-2.jpg");
+                    "https://scontent.fhan17-1.fna.fbcdn.net/v/t1.15752-9/470051940_2099017523860364_1882855945771681630_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeFN5boU2KcZDGJmSE3Cgi-Vlf_rnRgfxBGV_-udGB_EEexCAvQVXPMWfyiRAI3v_3WNGkSq2ME8DdszQc6ccxRK&_nc_ohc=lrsoNii7vmEQ7kNvwFMn70n&_nc_oc=Adlqv69VF49aOYULBUN5VKdWweW1wEUz8OmGLDXwu089zn-Qquf_ztCqA7CobL3tkVE&_nc_zt=23&_nc_ht=scontent.fhan17-1.fna&oh=03_Q7cD2QGAkQVLwcyi-KGwY-zz0p5nxI0793o5FmqPCaFwFMClow&oe=685FBB85");
         }
         userRepository.save(user);
     }
