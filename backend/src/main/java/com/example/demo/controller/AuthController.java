@@ -102,19 +102,11 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(email);
 
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(24 * 60 * 60)
-                    .sameSite("None")
-                    .domain("backend-jh-cff06dd28ef7.herokuapp.com")
-                    .build();
-            response.addHeader("Set-Cookie", cookie.toString());
-
             logger.info("OAuth2 user logged in successfully: {}", user.getEmail());
-            return ResponseEntity.ok()
-                    .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
+            // Return JWT and user info in response body
+            return ResponseEntity.ok().body(Map.of(
+                    "token", token,
+                    "user", user));
         } catch (Exception e) {
             logger.error("OAuth2 authentication failed", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OAuth2 authentication failed");
