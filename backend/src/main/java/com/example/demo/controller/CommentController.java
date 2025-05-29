@@ -12,6 +12,7 @@ class CommentWithProfileDTO {
     public String id;
     public String blogPostId;
     public String author;
+    public String authorName;
     public String authorProfilePicture;
     public String content;
     public java.time.LocalDateTime createdAt;
@@ -20,6 +21,7 @@ class CommentWithProfileDTO {
         this.id = comment.getId();
         this.blogPostId = comment.getBlogPostId();
         this.author = comment.getAuthor();
+        this.authorName = comment.getAuthorName();
         this.authorProfilePicture = profilePicture;
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
@@ -53,6 +55,13 @@ public class CommentController {
             User user = userService.getUserByEmail(comment.getAuthor());
             if (user != null) {
                 comment.setAuthorProfilePicture(user.getProfilePicture());
+            }
+        }
+        // If no authorName is provided, try to get it from the user
+        if (comment.getAuthorName() == null) {
+            User user = userService.getUserByEmail(comment.getAuthor());
+            if (user != null) {
+                comment.setAuthorName(user.getName());
             }
         }
         return commentRepository.save(comment);

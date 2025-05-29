@@ -13,6 +13,7 @@ public class Comment {
     private String content;
     private LocalDateTime createdAt;
     private String authorProfilePicture;
+    private String authorName;
 
     public Comment() {
     }
@@ -70,5 +71,13 @@ public class Comment {
 
     public void setAuthorProfilePicture(String authorProfilePicture) {
         this.authorProfilePicture = authorProfilePicture;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 }
