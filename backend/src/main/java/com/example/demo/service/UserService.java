@@ -33,6 +33,7 @@ public class UserService {
 
     public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setJoinDate(java.time.LocalDateTime.now().toString());
         userRepository.save(user);
     }
 
