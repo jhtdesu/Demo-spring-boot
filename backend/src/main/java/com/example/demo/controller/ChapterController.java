@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Chapter;
 import com.example.demo.repository.ChapterRepository;
@@ -21,7 +22,8 @@ import com.example.demo.service.ChapterService;
 
 import java.util.List;
 
-@Controller // Changed to @Controller to support returning view names
+@RestController
+@RequestMapping("/api/chapters")
 public class ChapterController {
 
     @Autowired // Added @Autowired to inject ChapterService
@@ -56,13 +58,11 @@ public class ChapterController {
         }
     }
 
-    @ResponseBody
     @GetMapping("/getAllChapters")
     public List<Chapter> getAllChapters() {
-        return chapterService.getAllChapters(); // Now using the injected instance
+        return chapterService.getAllChapters();
     }
 
-    @ResponseBody
     @GetMapping("/getChapter/{id}")
     public Chapter getChapter(@PathVariable String id) {
         return chapterService.getChapterById(id);
