@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -53,16 +54,6 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(loginRequest.getEmail());
 
-            ResponseCookie cookie = ResponseCookie.from("jwt", token)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(24 * 60 * 60)
-                    .sameSite("None")
-                    .domain("backend-jh-cff06dd28ef7.herokuapp.com")
-                    .build();
-            response.addHeader("Set-Cookie", cookie.toString());
-
             // Always get fresh user data
             User user = userService.getUserByEmail(loginRequest.getEmail());
             if (user == null) {
@@ -71,8 +62,10 @@ public class AuthController {
             }
 
             logger.info("User logged in successfully: {}", user.getEmail());
-            return ResponseEntity.ok()
-                    .body(new LoginResponse(user.getId(), user.getName(), user.getEmail()));
+            // Return JWT and user info in response body
+            return ResponseEntity.ok().body(Map.of(
+                    "token", token,
+                    "user", user));
         } catch (AuthenticationException e) {
             logger.error("Authentication failed for user: {}", loginRequest.getEmail(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
