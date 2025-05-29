@@ -35,4 +35,8 @@ public class ChapterService {
     public Chapter getChapterById(String id) {
         return chapterRepository.findById(id).orElse(null); // Correctly calling findById() on the injected instance
     }
+
+    public List<Chapter> getChaptersByBookId(String bookId) {
+        return chapterRepository.findByBookId(bookId);
+    }
 }

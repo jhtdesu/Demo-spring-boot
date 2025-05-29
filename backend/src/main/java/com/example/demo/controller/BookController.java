@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Book;
 import com.example.demo.service.BookService;
+import com.example.demo.service.ChapterService;
+import com.example.demo.model.Chapter;
 
 import java.util.List;
 
@@ -27,6 +29,9 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private ChapterService chapterService;
 
     @GetMapping("/addBookForm")
     public String showAddBookForm() {
@@ -77,5 +82,11 @@ public class BookController {
         model.addAttribute("message", message);
         model.addAttribute("book", updatedBookFromDb); // Add the updated book back to the model
         return "edit-book";
+    }
+
+    @ResponseBody
+    @GetMapping("/getBook/{id}/chapters")
+    public List<Chapter> getChaptersByBookId(@PathVariable String id) {
+        return chapterService.getChaptersByBookId(id);
     }
 }
