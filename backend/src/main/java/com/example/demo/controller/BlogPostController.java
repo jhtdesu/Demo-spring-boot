@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 class BlogPostWithProfileDTO {
     public String id;
@@ -98,14 +101,53 @@ public class BlogPostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BlogPost> updatePost(@PathVariable String id, @RequestBody BlogPost post) {
+    public ResponseEntity<BlogPost> updatePost(@PathVariable String id, @RequestBody BlogPost post,
+            @AuthenticationPrincipal Object principal) {
+        String email = null;
+        if (principal instanceof UserDetails userDetails) {
+            email = userDetails.getUsername();
+        } else if (principal instanceof OAuth2User oauth2User) {
+            email = (String) oauth2User.getAttribute("email");
+        }
+        if (email == null) {
+            return ResponseEntity.status(401).build();
+        }
+        BlogPost existingPost = blogPostService.getPostById(id).orElse(null);
+        if (existingPost == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!existingPost.getAuthor().equals(email)) {
+            return ResponseEntity.status(403).build();
+        }
         return blogPostService.updatePost(id, post)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable String id) {
+    public ResponseEntity<Void> deletePost(@PathVariable String id, @AuthenticationPrincipal Object principal) {
+        String email = null;
+        if (principal instanceof UserDetails userDetails) {
+            email = userDetails.getUsername();
+        } else if (principal instanceof OAuth2User oauth2User) {
+            email = (String) oauth2User.getAttribute("email");
+        }
+        if (email == null) {
+            return ResponseEntity.status(401).build();
+        }
+        BlogPost existingPost = blogPostService.getPostById(id).orElse(null);
+        if (existingPost == null) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = userService.getUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        boolean isAuthor = existingPost.getAuthor().equals(email);
+        boolean isModerator = user.isModerator();
+        if (!isAuthor && !isModerator) {
+            return ResponseEntity.status(403).build();
+        }
         blogPostService.deletePost(id);
         return ResponseEntity.ok().build();
     }
