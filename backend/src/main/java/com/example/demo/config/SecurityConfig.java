@@ -186,7 +186,6 @@ public class SecurityConfig {
                                                         .path("/")
                                                         .maxAge(24 * 60 * 60)
                                                         .sameSite("None")
-                                                        .domain("frontend-jh-74d9be1b01e4.herokuapp.com")
                                                         .build();
 
                                         logger.debug("Setting cookie: {}", cookie.toString());
